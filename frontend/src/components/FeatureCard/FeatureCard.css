@@ -1,0 +1,38 @@
+.feature-card{
+
+    width:320px;
+
+    padding:30px;
+
+    border-radius:16px;
+
+    background:#1B2436;
+
+    text-align:center;
+
+    transition:0.3s;
+}
+
+.feature-card:hover{
+
+    transform:translateY(-8px);
+}
+
+.feature-icon{
+
+    font-size:3rem;
+
+    margin-bottom:20px;
+}
+
+.feature-card h3{
+
+    margin-bottom:16px;
+}
+
+.feature-card p{
+
+    color:var(--secondary-text);
+
+    line-height:1.6;
+}
