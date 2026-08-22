@@ -31,8 +31,8 @@ public class DashboardService {
         this.goalRepository = goalRepository;
     }
 
-    public DashboardResponse getDashboard() {
-        User user = userRepository.findById(2L).orElseThrow();
+    public DashboardResponse getDashboard(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
 
         List<StatDto> stats = List.of(
                 new StatDto("Problems Solved", user.getProblemsSolved()),
@@ -42,7 +42,7 @@ public class DashboardService {
         );
 
         List<Activity> activityEntities =
-                activityRepository.findByUserId(2L);
+                activityRepository.findByUserId(userId);
         List<ActivityDto> activities = activityEntities.stream()
                 .map(activity ->
                         new ActivityDto(
@@ -53,7 +53,7 @@ public class DashboardService {
                 .toList();
 
         Goal goal = goalRepository
-                .findFirstByUserId(2L)
+                .findFirstByUserId(userId)
                 .orElseThrow();
 
         GoalDto goalDto = new GoalDto(

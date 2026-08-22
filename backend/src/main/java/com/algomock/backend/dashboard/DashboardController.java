@@ -3,6 +3,8 @@ package com.algomock.backend.dashboard;
 import com.algomock.backend.dto.DashboardResponse;
 import com.algomock.backend.service.DashboardService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,10 +20,14 @@ public class DashboardController {
     }
 
     @GetMapping
-    public ResponseEntity<DashboardResponse> getDashboard() {
+    public ResponseEntity<DashboardResponse> getDashboard(
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+
+        Long userId = Long.parseLong(jwt.getSubject());
 
         DashboardResponse dashboard =
-                dashboardService.getDashboard();
+                dashboardService.getDashboard(userId);
 
         return ResponseEntity.ok(dashboard);
     }
