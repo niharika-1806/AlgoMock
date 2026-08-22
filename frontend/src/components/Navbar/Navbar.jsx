@@ -1,4 +1,6 @@
 import "./Navbar.css";
+import { Link } from "react-router-dom";
+
 function Navbar() {
   const isLoggedIn = false;
   return (
@@ -18,15 +20,15 @@ function Navbar() {
         {
         isLoggedIn ?
         (
-        <button className="login-btn">
-          Dashboard
-        </button>
+          <Link to="/dashboard" className="login-btn">
+            Dashboard
+          </Link>
         )
         :
         (
-        <button className="login-btn">
+          <Link to="/login" className="login-btn">
             Login
-        </button>
+          </Link>
         )
         }
         <button className="primary-btn">Get Started</button>

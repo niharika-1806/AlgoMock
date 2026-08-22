@@ -1,0 +1,91 @@
+.btn{
+
+    border:none;
+
+    outline:none;
+
+    cursor:pointer;
+
+    border-radius:12px;
+
+    padding:12px 24px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:all 0.3s ease;
+
+}
+
+.btn:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.btn:disabled{
+
+    cursor:not-allowed;
+
+    opacity:0.6;
+
+    transform:none;
+
+}
+.primary{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+.primary:hover{
+
+    background:#1d4ed8;
+
+}
+.secondary{
+
+    background:#374151;
+
+    color:white;
+
+}
+
+.secondary:hover{
+
+    background:#4b5563;
+
+}
+.danger{
+
+    background:#dc2626;
+
+    color:white;
+
+}
+
+.danger:hover{
+
+    background:#b91c1c;
+
+}
+.outline{
+
+    background:transparent;
+
+    color:#2563eb;
+
+    border:2px solid #2563eb;
+
+}
+
+.outline:hover{
+
+    background:#2563eb;
+
+    color:white;
+
+}

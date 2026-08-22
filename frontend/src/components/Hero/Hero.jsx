@@ -7,7 +7,7 @@ function Hero() {
 
       <div className="hero-left">
         <div className="hero-badge">
-          🚀 AI-Powered Placement Preparation
+          🚀 AI- Powered Placement Preparation
         </div>
 
         <h1>

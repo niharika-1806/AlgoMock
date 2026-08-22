@@ -1,0 +1,39 @@
+.login-page{
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    position:relative;
+
+    background:#0F172A;
+
+}
+
+.back-home{
+
+    position:absolute;
+
+    top:40px;
+
+    left:50px;
+
+    text-decoration:none;
+
+    color:white;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.back-home:hover{
+
+    color:var(--primary);
+
+}

@@ -1,20 +1,35 @@
-import Navbar from "./components/Navbar/Navbar";
-import Hero from "./components/Hero/Hero";
-import Features from "./components/Features/Features";
-import HowItWorks from "./components/HowItWorks/HowItWorks";
-import Footer from "./components/Footer/Footer";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import { Routes, Route } from "react-router-dom";
+
+import LandingPage from "./Pages/LandingPage";
+import LoginPage from "./Pages/LoginPage";
+import Dashboard from "./Pages/DashboardPage";
 
 function App() {
-  return (
-    <>
-      <Navbar />
-      <Hero />
-      <Features />
-      <HowItWorks />
-      <Footer />
 
-    </>
-  );
+    return (
+        <Routes>
+            <Route
+                path="/"
+                element={<LandingPage />}
+            />
+
+            <Route
+                path="/login"
+                element={<LoginPage />}
+            />
+
+            <Route
+                path="/dashboard"
+                element={
+                    <ProtectedRoute>
+                    <Dashboard />
+                    </ProtectedRoute>
+                }
+            />
+        </Routes>
+    );
+
 }
 
 export default App;
