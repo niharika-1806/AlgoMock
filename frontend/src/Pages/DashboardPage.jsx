@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import "./DashboardPage.css";
 import StatCard from "../components/StatCard/StatCard";
@@ -138,42 +139,46 @@ if (!dashboardData) {
 
         <section className="features-section">
 
-            <h2>Main Features</h2>
-            <div className="features-grid">
-                {features.map((feature) => {
-                    const Icon = feature.icon;
-                    return (
-                    <div
-                        key={feature.title}
-                        className="feature-card"
-                    >
+    <h2>Main Features</h2>
+
+    <div className="features-grid">
+
+        {features.map((feature) => {
+
+            const Icon = feature.icon;
+
+            return (
+                <div
+                    key={feature.title}
+                    className="feature-card"
+                >
 
                     <h3>
-
                         <Icon size={24} />
-
                         {feature.title}
-
                     </h3>
 
                     <p>
-
                         {feature.description}
-
                     </p>
 
-                    <Button>
-
+                    <Button
+                        onClick={() => {
+                            if (feature.title === "Review My Code") {
+                                navigate("/review");
+                            }
+                        }}
+                    >
                         {feature.button}
-
                     </Button>
 
-                    </div>
-                    );
-                })}
-            </div>  
-        </section>
+                </div>
+            );
+        })}
 
+    </div>
+
+</section>
         <section className="activity-section">
             <h2>Recent Activity</h2>
             <div className="activity-list">

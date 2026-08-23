@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import LandingPage from "./Pages/LandingPage";
 import LoginPage from "./Pages/LoginPage";
 import Dashboard from "./Pages/DashboardPage";
+import ReviewPage from "./Pages/ReviewPage";
 
 function App() {
 
@@ -27,6 +28,14 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+            <Route
+                path="/review"
+                element={
+                <ProtectedRoute>
+                    <ReviewPage />
+                </ProtectedRoute>
+    }
+/>
         </Routes>
     );
 
