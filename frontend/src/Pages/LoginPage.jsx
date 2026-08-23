@@ -1,31 +1,26 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
+import LoginForm from "../components/Loginform/Loginform";
 import "./LoginPage.css";
-import { Link } from "react-router-dom";
-
-import LoginForm from "../components/LoginForm/LoginForm";
 
 function LoginPage() {
-    const isLoggedIn = localStorage.getItem("loggedIn");
-    if (isLoggedIn) {
-        return <Navigate to="/dashboard" />;
+
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        return <Navigate to="/dashboard" replace />;
     }
 
     return (
-
         <div className="login-page">
 
             <Link to="/" className="back-home">
-
                 ← Back to Home
-
             </Link>
 
             <LoginForm />
 
         </div>
-
     );
-
 }
 
 export default LoginPage;

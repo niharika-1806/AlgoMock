@@ -20,12 +20,24 @@ function Dashboard() {
     const [dashboardData, setDashboardData] = useState(null);
     useEffect(() => {
 
-    fetch("http://localhost:8080/api/dashboard")
-        .then((response) => response.json())
+    const token = localStorage.getItem("token");
+
+    fetch("http://localhost:8080/api/dashboard", {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+        .then((response) => {
+
+            if (!response.ok) {
+                throw new Error(`Dashboard request failed: ${response.status}`);
+            }
+
+            return response.json();
+        })
         .then((data) => {
 
             console.log("Dashboard Data:", data);
-
             setDashboardData(data);
 
         })
@@ -55,26 +67,32 @@ function Dashboard() {
     document.title = "AlgoMock Dashboard";
     }, []);
 
-   
     function handleLogout() {
-        localStorage.removeItem("loggedIn");
-        // navigate to the landing page after user log's out.
-        navigate("/");
-    }
-    if (loading) {
-        return (
-        <div className="loading-screen">
-            <h1>Loading Dashboard...</h1>
-        </div>
-        );
-    }
-    if (!dashboardData) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("loggedIn");
+     navigate("/login");
+}
+
+if (loading) {
     return (
         <div className="loading-screen">
             <h1>Loading Dashboard...</h1>
         </div>
     );
 }
+
+if (!dashboardData) {
+    return (
+        <div className="loading-screen">
+            <h1>Loading Dashboard...</h1>
+        </div>
+    );
+}
+
+    
+
+   
+    
     return (
     <div className="dashboard">
 
