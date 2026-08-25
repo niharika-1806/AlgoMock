@@ -230,8 +230,12 @@ function Dashboard() {
                         onClick={() => {
 
                             if (feature.title === "Review My Code") {
-                                navigate("/review");
-                            }
+    navigate("/review");
+}
+
+if (feature.title === "Mock Interview") {
+    navigate("/mock-interview");
+}
 
                         }}
                     >

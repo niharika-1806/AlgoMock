@@ -7,6 +7,7 @@ import Dashboard from "./Pages/DashboardPage";
 import ReviewPage from "./Pages/ReviewPage";
 import ReviewHistoryPage from "./Pages/ReviewHistoryPage";
 import ReviewDetailsPage from "./Pages/ReviewDetailsPage";
+import MockInterviewPage from "./Pages/MockInterviewPage";
 
 function App() {
 
@@ -52,6 +53,14 @@ function App() {
     element={
         <ProtectedRoute>
             <ReviewDetailsPage />
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/mock-interview"
+    element={
+        <ProtectedRoute>
+            <MockInterviewPage />
         </ProtectedRoute>
     }
 />
