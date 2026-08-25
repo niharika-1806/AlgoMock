@@ -5,6 +5,7 @@ import LandingPage from "./Pages/LandingPage";
 import LoginPage from "./Pages/LoginPage";
 import Dashboard from "./Pages/DashboardPage";
 import ReviewPage from "./Pages/ReviewPage";
+import ReviewHistoryPage from "./Pages/ReviewHistoryPage";
 
 function App() {
 
@@ -34,8 +35,17 @@ function App() {
                 <ProtectedRoute>
                     <ReviewPage />
                 </ProtectedRoute>
-    }
-/>
+            
+                }
+            />
+            <Route
+                path="/review-history"
+                element={
+                <ProtectedRoute>
+                <ReviewHistoryPage />
+                </ProtectedRoute>
+                }
+            />
         </Routes>
     );
 
