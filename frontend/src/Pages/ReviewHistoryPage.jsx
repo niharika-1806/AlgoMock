@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./ReviewHistoryPage.css";
 
+
 function ReviewHistoryPage() {
 
     const [reviews, setReviews] = useState([]);
@@ -166,6 +167,12 @@ function ReviewHistoryPage() {
                                     </div>
 
                                 </div>
+                                <Link
+    to={`/review-history/${review.id}`}
+    className="view-review-link"
+>
+    View Full Review →
+</Link>
 
                             </div>
 

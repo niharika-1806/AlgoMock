@@ -201,62 +201,59 @@ function Dashboard() {
 
 
             {/* ================= MAIN FEATURES ================= */}
-
             <section className="features-section">
 
-                <h2>Main Features</h2>
+    <h2>Main Features</h2>
 
-                <div className="features-grid">
+    <div className="features-grid">
 
-                    {features.map((feature) => {
+        {features.map((feature) => {
 
-                        const Icon = feature.icon;
+            const Icon = feature.icon;
 
-                        return (
+            return (
+                <div
+                    key={feature.title}
+                    className="feature-card"
+                >
 
-                            <div
-                                key={feature.title}
-                                className="feature-card"
-                            >
+                    <h3>
+                        <Icon size={24} />
+                        {feature.title}
+                    </h3>
 
-                                <h3>
+                    <p>
+                        {feature.description}
+                    </p>
 
-                                    <Icon size={24} />
+                    <Button
+                        onClick={() => {
 
-                                    {feature.title}
+                            if (feature.title === "Review My Code") {
+                                navigate("/review");
+                            }
 
-                                </h3>
-
-                                <p>
-                                    {feature.description}
-                                </p>
-
-                                <Button
-                                    onClick={() => {
-
-                                        if (
-                                            feature.title ===
-                                            "Review My Code"
-                                        ) {
-                                            navigate("/review");
-                                        }
-
-                                    }}
-                                >
-                                    {feature.button}
-                                </Button>
-
-                            </div>
-
-                        );
-
-                    })}
+                        }}
+                    >
+                        {feature.button}
+                    </Button>
 
                 </div>
+            );
+        })}
 
-            </section>
+    </div>
 
+    <div className="review-history-action">
+        <Button
+            variant="primary"
+            onClick={() => navigate("/review-history")}
+        >
+            View Review History
+        </Button>
+    </div>
 
+</section>
             {/* ================= RECENT ACTIVITY ================= */}
 
             <section className="activity-section">
