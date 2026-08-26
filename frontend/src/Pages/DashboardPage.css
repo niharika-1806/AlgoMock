@@ -378,8 +378,11 @@
     }
 
 }
-.review-history-action {
+
+.history-actions {
     display: flex;
     justify-content: center;
+    gap: 16px;
     margin-top: 24px;
+    flex-wrap: wrap;
 }

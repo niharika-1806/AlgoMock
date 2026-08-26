@@ -247,15 +247,23 @@ if (feature.title === "Mock Interview") {
         })}
 
     </div>
+    <div className="history-actions">
 
-    <div className="review-history-action">
-        <Button
-            variant="primary"
-            onClick={() => navigate("/review-history")}
-        >
-            View Review History
-        </Button>
-    </div>
+    <Button
+        variant="primary"
+        onClick={() => navigate("/review-history")}
+    >
+        View Review History
+    </Button>
+
+    <Button
+        variant="primary"
+        onClick={() => navigate("/mock-interview-history")}
+    >
+        View Interview History
+    </Button>
+
+</div>
 
 </section>
             {/* ================= RECENT ACTIVITY ================= */}
