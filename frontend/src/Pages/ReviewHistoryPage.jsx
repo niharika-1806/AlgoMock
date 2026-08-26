@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./ReviewHistoryPage.css";
+import { apiFetch } from "../utils/api";
 
 
 function ReviewHistoryPage() {
@@ -11,54 +12,33 @@ function ReviewHistoryPage() {
 
     useEffect(() => {
 
-        async function fetchReviews() {
+       async function fetchReviews() {
 
-            const token = localStorage.getItem("token");
+    try {
 
-            if (!token) {
-                setError("You are not logged in.");
-                setLoading(false);
-                return;
-            }
+        const response = await apiFetch("/api/reviews");
 
-            try {
-
-                const response = await fetch(
-                    "http://localhost:8080/api/reviews",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
-                );
-
-                if (!response.ok) {
-
-                    if (response.status === 401) {
-                        setError(
-                            "Your session has expired. Please log in again."
-                        );
-                    } else {
-                        setError("Failed to load review history.");
-                    }
-
-                    return;
-                }
-
-                const data = await response.json();
-
-                setReviews(data);
-
-            } catch (error) {
-
-                console.error("History error:", error);
-                setError("Unable to connect to the server.");
-
-            } finally {
-
-                setLoading(false);
-            }
+        if (!response.ok) {
+            throw new Error(
+                `Failed to load review history: ${response.status}`
+            );
         }
+
+        const data = await response.json();
+
+        setReviews(data);
+
+    } catch (error) {
+
+        console.error("History error:", error);
+
+        setError("Unable to load review history.");
+
+    } finally {
+
+        setLoading(false);
+    }
+}
 
         fetchReviews();
 

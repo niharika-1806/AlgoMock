@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import "./ReviewDetailsPage.css";
+import { apiFetch } from "../utils/api";
 
 function ReviewDetailsPage() {
 
@@ -15,49 +16,26 @@ function ReviewDetailsPage() {
 
         async function fetchReview() {
 
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                setError("You are not logged in.");
-                setLoading(false);
-                return;
-            }
-
             try {
+                
+                const response = await apiFetch(
+        `/api/reviews/${id}`
+    );
+if (!response.ok) {
 
-                const response = await fetch(
-                    `http://localhost:8080/api/reviews/${id}`,
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
-                );
+        if (response.status === 404) {
+            setError("Review not found.");
+            return;
+        }
 
-                if (response.status === 401) {
+        throw new Error(
+            `Failed to load review: ${response.status}`
+        );
+    }
 
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("loggedIn");
+    const data = await response.json();
 
-                    setError("Your session has expired.");
-                    return;
-                }
-
-                if (response.status === 404) {
-                    setError("Review not found.");
-                    return;
-                }
-
-                if (!response.ok) {
-                    throw new Error(
-                        `Failed to load review: ${response.status}`
-                    );
-                }
-
-                const data = await response.json();
-
-                setReview(data);
+    setReview(data);
 
             } catch (error) {
 

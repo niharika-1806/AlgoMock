@@ -7,6 +7,8 @@ import StatCard from "../components/StatCard/StatCard";
 import Button from "../components/Buttons/Buttons";
 import features from "../data/features";
 
+import { apiFetch } from "../utils/api";
+
 function Dashboard() {
 
     const navigate = useNavigate();
@@ -17,14 +19,6 @@ function Dashboard() {
 
     useEffect(() => {
 
-        const token = localStorage.getItem("token");
-
-        // No token → send user to login
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-
         async function fetchDashboard() {
 
             try {
@@ -32,27 +26,10 @@ function Dashboard() {
                 setLoading(true);
                 setError("");
 
-                const response = await fetch(
-                    "http://localhost:8080/api/dashboard",
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+                const response = await apiFetch(
+                    "/api/dashboard"
                 );
 
-                // Token expired / invalid
-                if (response.status === 401) {
-
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("loggedIn");
-
-                    navigate("/login");
-                    return;
-                }
-
-                // Any other HTTP error
                 if (!response.ok) {
 
                     throw new Error(
@@ -68,7 +45,14 @@ function Dashboard() {
 
             } catch (error) {
 
-                console.error("Error fetching dashboard:", error);
+                console.error(
+                    "Error fetching dashboard:",
+                    error
+                );
+
+                if (error.message === "Session expired.") {
+                    return;
+                }
 
                 setError(
                     "Unable to load dashboard. Please try again."
@@ -76,7 +60,6 @@ function Dashboard() {
 
             } finally {
 
-                // Always stop loading
                 setLoading(false);
 
             }
@@ -84,7 +67,7 @@ function Dashboard() {
 
         fetchDashboard();
 
-    }, [navigate]);
+    }, []);
 
 
     // Page title
@@ -96,13 +79,16 @@ function Dashboard() {
 
 
     // Logout
-    function handleLogout() {
+   function handleLogout() {
 
-        localStorage.removeItem("token");
-        localStorage.removeItem("loggedIn");
+    localStorage.removeItem("token");
 
-        navigate("/login");
-    }
+    window.dispatchEvent(
+        new Event("authChange")
+    );
+
+    navigate("/login");
+}
 
 
     // Loading state
@@ -110,10 +96,13 @@ function Dashboard() {
 
         return (
             <div className="loading-screen">
-                <h1>Loading Dashboard...</h1>
+
+                <h1>
+                    Loading Dashboard...
+                </h1>
+
             </div>
         );
-
     }
 
 
@@ -122,7 +111,10 @@ function Dashboard() {
 
         return (
             <div className="loading-screen">
-                <h1>{error}</h1>
+
+                <h1>
+                    {error}
+                </h1>
 
                 <Button
                     variant="primary"
@@ -130,9 +122,9 @@ function Dashboard() {
                 >
                     Try Again
                 </Button>
+
             </div>
         );
-
     }
 
 
@@ -141,10 +133,13 @@ function Dashboard() {
 
         return (
             <div className="loading-screen">
-                <h1>No dashboard data available.</h1>
+
+                <h1>
+                    No dashboard data available.
+                </h1>
+
             </div>
         );
-
     }
 
 
@@ -158,7 +153,7 @@ function Dashboard() {
                 <div className="header-left">
 
                     <h1>
-                        👋 Welcome back, Niharika
+                        👋 Welcome back, {dashboardData.userName}
                     </h1>
 
                     <p>
@@ -166,6 +161,7 @@ function Dashboard() {
                     </p>
 
                 </div>
+
 
                 <Button
                     variant="primary"
@@ -181,7 +177,9 @@ function Dashboard() {
 
             <section className="stats-section">
 
-                <h2>Quick Stats</h2>
+                <h2>
+                    Quick Stats
+                </h2>
 
                 <div className="stats-grid">
 
@@ -201,141 +199,94 @@ function Dashboard() {
 
 
             {/* ================= MAIN FEATURES ================= */}
+
             <section className="features-section">
 
-    <h2>Main Features</h2>
+                <h2>
+                    Main Features
+                </h2>
 
-    <div className="features-grid">
+                <div className="features-grid">
 
-        {features.map((feature) => {
+                    {features.map((feature) => {
 
-            const Icon = feature.icon;
+                        const Icon = feature.icon;
 
-            return (
-                <div
-                    key={feature.title}
-                    className="feature-card"
-                >
+                        return (
 
-                    <h3>
-                        <Icon size={24} />
-                        {feature.title}
-                    </h3>
+                            <div
+                                key={feature.title}
+                                className="feature-card"
+                            >
 
-                    <p>
-                        {feature.description}
-                    </p>
+                                <h3>
+
+                                    <Icon size={24} />
+
+                                    {feature.title}
+
+                                </h3>
+
+                                <p>
+                                    {feature.description}
+                                </p>
+
+                                <Button
+                                    onClick={() => {
+
+                                        if (
+                                            feature.title ===
+                                            "Review My Code"
+                                        ) {
+
+                                            navigate("/review");
+
+                                        }
+
+                                        if (
+                                            feature.title ===
+                                            "Mock Interview"
+                                        ) {
+
+                                            navigate("/mock-interview");
+
+                                        }
+
+                                    }}
+                                >
+                                    {feature.button}
+                                </Button>
+
+                            </div>
+
+                        );
+
+                    })}
+
+                </div>
+
+
+                {/* ================= HISTORY ACTIONS ================= */}
+
+                <div className="history-actions">
 
                     <Button
-                        onClick={() => {
-
-                            if (feature.title === "Review My Code") {
-    navigate("/review");
-}
-
-if (feature.title === "Mock Interview") {
-    navigate("/mock-interview");
-}
-
-                        }}
+                        variant="primary"
+                        onClick={() =>
+                            navigate("/review-history")
+                        }
                     >
-                        {feature.button}
+                        View Review History
                     </Button>
 
-                </div>
-            );
-        })}
 
-    </div>
-    <div className="history-actions">
-
-    <Button
-        variant="primary"
-        onClick={() => navigate("/review-history")}
-    >
-        View Review History
-    </Button>
-
-    <Button
-        variant="primary"
-        onClick={() => navigate("/mock-interview-history")}
-    >
-        View Interview History
-    </Button>
-
-</div>
-
-</section>
-            {/* ================= RECENT ACTIVITY ================= */}
-
-            <section className="activity-section">
-
-                <h2>Recent Activity</h2>
-
-                <div className="activity-list">
-
-                    {dashboardData.activities.map((activity) => (
-
-                        <div
-                            className="activity-item"
-                            key={activity.text}
-                        >
-
-                            <span>
-                                {activity.text}
-                            </span>
-
-                            <small>
-                                {activity.time}
-                            </small>
-
-                        </div>
-
-                    ))}
-
-                </div>
-
-            </section>
-
-
-            {/* ================= TODAY'S GOAL ================= */}
-
-            <section className="goal-section">
-
-                <h2>Today's Goal</h2>
-
-                <div className="goal-card">
-
-                    <div className="goal-header">
-
-                        <h3>
-                            {dashboardData.goal.title}
-                        </h3>
-
-                        <span>
-                            {dashboardData.goal.progress}
-                        </span>
-
-                    </div>
-
-                    <p className="goal-description">
-                        {dashboardData.goal.description}
-                    </p>
-
-                    <div className="progress-bar">
-
-                        <div
-                            className="progress-fill"
-                            style={{
-                                width:
-                                    dashboardData.goal.progress
-                            }}
-                        ></div>
-
-                    </div>
-
-                    <Button variant="primary">
-                        Continue Solving
+                    <Button
+                        variant="primary"
+                        onClick={() =>
+                            navigate("/mock-interview-history")
+                        }
+                    >
+                        View Interview History
                     </Button>
 
                 </div>

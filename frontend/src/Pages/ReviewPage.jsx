@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./ReviewPage.css";
+import { apiFetch } from "../utils/api";
 
 function ReviewPage() {
 
@@ -26,32 +27,20 @@ function ReviewPage() {
             return;
         }
 
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            setError("You are not logged in.");
-            return;
-        }
-
         try {
 
             setLoading(true);
 
-            const response = await fetch(
-                "http://localhost:8080/api/reviews",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        problem: problem,
-                        code: code
-                    })
-                }
-            );
-
+            const response = await apiFetch(
+    "/api/reviews",
+    {
+        method: "POST",
+        body: JSON.stringify({
+            problem: problem,
+            code: code
+        })
+    }
+);
             if (!response.ok) {
 
                 if (response.status === 401) {

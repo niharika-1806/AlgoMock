@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import "./MockInterviewDetailsPage.css";
+import { apiFetch } from "../utils/api";
 
 function MockInterviewDetailsPage() {
 
@@ -15,37 +16,11 @@ function MockInterviewDetailsPage() {
 
         async function fetchInterview() {
 
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                setError("You are not logged in.");
-                setLoading(false);
-                return;
-            }
-
             try {
 
-                const response = await fetch(
-                    `http://localhost:8080/api/interviews/${id}`,
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+                const response = await apiFetch(
+                    `/api/interviews/${id}`
                 );
-
-                if (response.status === 401) {
-
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("loggedIn");
-
-                    setError(
-                        "Your session has expired. Please log in again."
-                    );
-
-                    return;
-                }
 
                 if (response.status === 404) {
                     setError("Interview not found.");
@@ -69,7 +44,13 @@ function MockInterviewDetailsPage() {
                     error
                 );
 
-                setError("Unable to load this interview.");
+                if (error.message === "Session expired.") {
+                    return;
+                }
+
+                setError(
+                    "Unable to load this interview."
+                );
 
             } finally {
 
@@ -83,15 +64,18 @@ function MockInterviewDetailsPage() {
 
 
     if (loading) {
+
         return (
             <div className="mock-details-loading">
                 <h1>Loading Interview...</h1>
             </div>
         );
+
     }
 
 
     if (error) {
+
         return (
             <div className="mock-details-page">
 
@@ -112,6 +96,7 @@ function MockInterviewDetailsPage() {
 
             </div>
         );
+
     }
 
 
@@ -148,6 +133,7 @@ function MockInterviewDetailsPage() {
                         </h1>
 
                     </div>
+
 
                     <div className="mock-details-score">
 
@@ -224,7 +210,11 @@ function MockInterviewDetailsPage() {
                             </ul>
 
                         ) : (
-                            <p>No strengths provided.</p>
+
+                            <p>
+                                No strengths provided.
+                            </p>
+
                         )}
 
                     </section>
@@ -247,7 +237,11 @@ function MockInterviewDetailsPage() {
                             </ul>
 
                         ) : (
-                            <p>No improvements provided.</p>
+
+                            <p>
+                                No improvements provided.
+                            </p>
+
                         )}
 
                     </section>

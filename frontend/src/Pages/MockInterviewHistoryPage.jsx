@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import "./MockInterviewHistoryPage.css";
+import { apiFetch } from "../utils/api";
 
 function MockInterviewHistoryPage() {
 
@@ -13,37 +14,11 @@ function MockInterviewHistoryPage() {
 
         async function fetchInterviewHistory() {
 
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                setError("You are not logged in.");
-                setLoading(false);
-                return;
-            }
-
             try {
 
-                const response = await fetch(
-                    "http://localhost:8080/api/interviews",
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+                const response = await apiFetch(
+                    "/api/interviews"
                 );
-
-                if (response.status === 401) {
-
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("loggedIn");
-
-                    setError(
-                        "Your session has expired. Please log in again."
-                    );
-
-                    return;
-                }
 
                 if (!response.ok) {
                     throw new Error(
@@ -62,6 +37,10 @@ function MockInterviewHistoryPage() {
                     error
                 );
 
+                if (error.message === "Session expired.") {
+                    return;
+                }
+
                 setError(
                     "Unable to load interview history."
                 );
@@ -78,11 +57,13 @@ function MockInterviewHistoryPage() {
 
 
     if (loading) {
+
         return (
             <div className="mock-history-loading">
                 <h1>Loading Interview History...</h1>
             </div>
         );
+
     }
 
 
@@ -136,6 +117,7 @@ function MockInterviewHistoryPage() {
                         </Link>
 
                     </div>
+
                 )}
 
 
@@ -169,6 +151,7 @@ function MockInterviewHistoryPage() {
                                         </span>
 
                                     </div>
+
 
                                     <div className="mock-score">
 
@@ -204,6 +187,7 @@ function MockInterviewHistoryPage() {
                         ))}
 
                     </div>
+
                 )}
 
             </div>

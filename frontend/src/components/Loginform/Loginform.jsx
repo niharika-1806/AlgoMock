@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import "./Loginform.css";
+import "./LoginForm.css";
 
 function LoginForm() {
 
@@ -13,6 +13,7 @@ function LoginForm() {
 
     const navigate = useNavigate();
 
+
     async function handleSubmit(event) {
 
         event.preventDefault();
@@ -23,38 +24,62 @@ function LoginForm() {
 
         let hasError = false;
 
-        // Empty email validation
+
+        // -------------------------------
+        // Empty field validation
+        // -------------------------------
+
         if (email.trim() === "") {
+
             setEmailError("Email is required.");
             hasError = true;
         }
 
-        // Empty password validation
         if (password.trim() === "") {
+
             setPasswordError("Password is required.");
             hasError = true;
         }
 
-        // Stop if any field is empty
         if (hasError) {
             return;
         }
 
-        // Email format validation
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // -------------------------------
+        // Email validation
+        // -------------------------------
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!emailPattern.test(email)) {
-            setEmailError("Please enter a valid email address.");
+
+            setEmailError(
+                "Please enter a valid email address."
+            );
+
             return;
         }
 
-        // Password length validation
+
+        // -------------------------------
+        // Password validation
+        // -------------------------------
+
         if (password.length < 8) {
+
             setPasswordError(
                 "Password must be at least 8 characters long."
             );
+
             return;
         }
+
+
+        // -------------------------------
+        // Login request
+        // -------------------------------
 
         try {
 
@@ -68,44 +93,85 @@ function LoginForm() {
                     },
 
                     body: JSON.stringify({
-                        email: email,
+                        email: email.trim(),
                         password: password
                     })
                 }
             );
 
-            if (!response.ok) {
 
-                if (response.status === 401) {
-                    setPasswordError(
-                        "Invalid email or password."
-                    );
-                } else {
-                    setPasswordError(
-                        "Something went wrong. Please try again."
-                    );
-                }
+            // -------------------------------
+            // Authentication failure
+            // -------------------------------
+
+            if (response.status === 401) {
+
+                setPasswordError(
+                    "Invalid email or password."
+                );
 
                 return;
             }
 
+
+            // -------------------------------
+            // Other backend error
+            // -------------------------------
+
+            if (!response.ok) {
+
+                setPasswordError(
+                    "Something went wrong. Please try again."
+                );
+
+                return;
+            }
+
+
+            // -------------------------------
+            // Get JWT
+            // -------------------------------
+
             const token = await response.text();
 
-            // Store JWT
-            localStorage.setItem("token", token);
+            if (!token || token.trim() === "") {
 
-            // Go to dashboard
-            navigate("/dashboard");
+                setPasswordError(
+                    "Login failed. No authentication token received."
+                );
+
+                return;
+            }
+
+
+            // -------------------------------
+            // Store JWT
+            // -------------------------------
+
+           localStorage.setItem(
+    "token",
+    token.trim()
+);
+
+window.dispatchEvent(
+    new Event("authChange")
+);
+
+navigate("/dashboard");
 
         } catch (error) {
 
-            console.error("Login error:", error);
+            console.error(
+                "Login error:",
+                error
+            );
 
             setPasswordError(
                 "Unable to connect to the server. Please try again."
             );
         }
     }
+
 
     return (
         <form
@@ -114,11 +180,16 @@ function LoginForm() {
             noValidate
         >
 
-            <h1>Welcome Back 👋</h1>
+            <h1>
+                Welcome Back 👋
+            </h1>
 
             <p>
                 Continue your coding interview preparation.
             </p>
+
+
+            {/* Email */}
 
             <input
                 type="email"
@@ -135,6 +206,9 @@ function LoginForm() {
                 </p>
             )}
 
+
+            {/* Password */}
+
             <input
                 type="password"
                 placeholder="Enter your password"
@@ -149,6 +223,9 @@ function LoginForm() {
                     {passwordError}
                 </p>
             )}
+
+
+            {/* Login */}
 
             <button type="submit">
                 Login

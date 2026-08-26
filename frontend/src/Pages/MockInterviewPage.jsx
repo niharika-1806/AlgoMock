@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import "./MockInterviewPage.css";
+import { apiFetch } from "../utils/api";
 
 function MockInterviewPage() {
 
@@ -24,41 +25,19 @@ function MockInterviewPage() {
             return;
         }
 
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            setError("You are not logged in.");
-            return;
-        }
-
         try {
 
             setLoading(true);
 
-            const response = await fetch(
-                "http://localhost:8080/api/interviews",
+            const response = await apiFetch(
+                "/api/interviews",
                 {
                     method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-
                     body: JSON.stringify({
                         topic: topic
                     })
                 }
             );
-
-            if (response.status === 401) {
-
-                localStorage.removeItem("token");
-                localStorage.removeItem("loggedIn");
-
-                setError("Your session has expired. Please log in again.");
-                return;
-            }
 
             if (!response.ok) {
                 throw new Error(
@@ -72,9 +51,18 @@ function MockInterviewPage() {
 
         } catch (error) {
 
-            console.error("Start interview error:", error);
+            console.error(
+                "Start interview error:",
+                error
+            );
 
-            setError("Unable to start the interview.");
+            if (error.message === "Session expired.") {
+                return;
+            }
+
+            setError(
+                "Unable to start the interview. Please try again."
+            );
 
         } finally {
 
@@ -92,10 +80,8 @@ function MockInterviewPage() {
             return;
         }
 
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            setError("You are not logged in.");
+        if (!interview) {
+            setError("No active interview found.");
             return;
         }
 
@@ -103,30 +89,15 @@ function MockInterviewPage() {
 
             setSubmitting(true);
 
-            const response = await fetch(
-                `http://localhost:8080/api/interviews/${interview.id}/answer`,
+            const response = await apiFetch(
+                `/api/interviews/${interview.id}/answer`,
                 {
                     method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-
                     body: JSON.stringify({
                         answer: answer
                     })
                 }
             );
-
-            if (response.status === 401) {
-
-                localStorage.removeItem("token");
-                localStorage.removeItem("loggedIn");
-
-                setError("Your session has expired. Please log in again.");
-                return;
-            }
 
             if (!response.ok) {
                 throw new Error(
@@ -140,14 +111,33 @@ function MockInterviewPage() {
 
         } catch (error) {
 
-            console.error("Submit answer error:", error);
+            console.error(
+                "Submit answer error:",
+                error
+            );
 
-            setError("Unable to submit your answer.");
+            if (error.message === "Session expired.") {
+                return;
+            }
+
+            setError(
+                "Unable to submit your answer. Please try again."
+            );
 
         } finally {
 
             setSubmitting(false);
         }
+    }
+
+
+    function startAnotherInterview() {
+
+        setInterview(null);
+        setAnswer("");
+        setTopic("");
+        setError("");
+
     }
 
 
@@ -175,6 +165,8 @@ function MockInterviewPage() {
                 </div>
 
 
+                {/* ================= TOPIC SELECTION ================= */}
+
                 {!interview && (
 
                     <div className="topic-panel">
@@ -186,6 +178,7 @@ function MockInterviewPage() {
                             onChange={(event) =>
                                 setTopic(event.target.value)
                             }
+                            disabled={loading}
                         >
 
                             <option value="">
@@ -219,6 +212,13 @@ function MockInterviewPage() {
                         </select>
 
 
+                        {error && (
+                            <div className="interview-error">
+                                {error}
+                            </div>
+                        )}
+
+
                         <button
                             className="interview-button"
                             onClick={startInterview}
@@ -234,6 +234,8 @@ function MockInterviewPage() {
 
                 )}
 
+
+                {/* ================= QUESTION ================= */}
 
                 {interview && interview.score === 0 && (
 
@@ -251,25 +253,30 @@ function MockInterviewPage() {
 
                         </div>
 
+
                         <h2>
                             Your Question
                         </h2>
+
 
                         <div className="question-content">
                             {interview.question}
                         </div>
 
 
-                        <label>
+                        <label htmlFor="interview-answer">
                             Your Answer
                         </label>
 
+
                         <textarea
+                            id="interview-answer"
                             value={answer}
                             onChange={(event) =>
                                 setAnswer(event.target.value)
                             }
                             placeholder="Explain your approach as if you were answering a technical interviewer..."
+                            disabled={submitting}
                         />
 
 
@@ -296,6 +303,8 @@ function MockInterviewPage() {
                 )}
 
 
+                {/* ================= RESULT ================= */}
+
                 {interview && interview.score > 0 && (
 
                     <div className="interview-result">
@@ -314,6 +323,7 @@ function MockInterviewPage() {
 
                             </div>
 
+
                             <div className="interview-score">
 
                                 <span>
@@ -331,7 +341,9 @@ function MockInterviewPage() {
 
                         <section className="result-section">
 
-                            <h3>Question</h3>
+                            <h3>
+                                Question
+                            </h3>
 
                             <p>
                                 {interview.question}
@@ -342,7 +354,9 @@ function MockInterviewPage() {
 
                         <section className="result-section">
 
-                            <h3>Your Answer</h3>
+                            <h3>
+                                Your Answer
+                            </h3>
 
                             <p>
                                 {interview.answer}
@@ -353,7 +367,9 @@ function MockInterviewPage() {
 
                         <section className="result-section">
 
-                            <h3>Feedback</h3>
+                            <h3>
+                                Feedback
+                            </h3>
 
                             <p>
                                 {interview.feedback}
@@ -366,34 +382,58 @@ function MockInterviewPage() {
 
                             <div className="feedback-card">
 
-                                <h3>✓ Strengths</h3>
+                                <h3>
+                                    ✓ Strengths
+                                </h3>
 
-                                <ul>
-                                    {interview.strengths?.map(
-                                        (strength, index) => (
-                                            <li key={index}>
-                                                {strength}
-                                            </li>
-                                        )
-                                    )}
-                                </ul>
+                                {interview.strengths?.length > 0 ? (
+
+                                    <ul>
+                                        {interview.strengths.map(
+                                            (strength, index) => (
+                                                <li key={index}>
+                                                    {strength}
+                                                </li>
+                                            )
+                                        )}
+                                    </ul>
+
+                                ) : (
+
+                                    <p>
+                                        No strengths provided.
+                                    </p>
+
+                                )}
 
                             </div>
 
 
                             <div className="feedback-card improvement-card">
 
-                                <h3>⚡ Improvements</h3>
+                                <h3>
+                                    ⚡ Improvements
+                                </h3>
 
-                                <ul>
-                                    {interview.improvements?.map(
-                                        (improvement, index) => (
-                                            <li key={index}>
-                                                {improvement}
-                                            </li>
-                                        )
-                                    )}
-                                </ul>
+                                {interview.improvements?.length > 0 ? (
+
+                                    <ul>
+                                        {interview.improvements.map(
+                                            (improvement, index) => (
+                                                <li key={index}>
+                                                    {improvement}
+                                                </li>
+                                            )
+                                        )}
+                                    </ul>
+
+                                ) : (
+
+                                    <p>
+                                        No improvements provided.
+                                    </p>
+
+                                )}
 
                             </div>
 
@@ -402,24 +442,13 @@ function MockInterviewPage() {
 
                         <button
                             className="interview-button"
-                            onClick={() => {
-                                setInterview(null);
-                                setAnswer("");
-                                setTopic("");
-                            }}
+                            onClick={startAnotherInterview}
                         >
                             Start Another Interview
                         </button>
 
                     </div>
 
-                )}
-
-
-                {error && !interview && (
-                    <div className="interview-error">
-                        {error}
-                    </div>
                 )}
 
             </div>
