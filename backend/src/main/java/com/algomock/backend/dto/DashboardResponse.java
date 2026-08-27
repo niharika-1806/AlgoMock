@@ -4,29 +4,41 @@ import java.util.List;
 
 public class DashboardResponse {
 
+    private String userName;
+    private String userRole;
     private List<StatDto> stats;
-    private List<ActivityDto> activities;
-    private GoalDto goal;
+
+    public DashboardResponse() {
+    }
 
     public DashboardResponse(
-            List<StatDto> stats,
-            List<ActivityDto> activities,
-            GoalDto goal
+            String userName,
+            List<StatDto> stats
     ) {
+        this.userName = userName;
+        this.userRole = "USER";
         this.stats = stats;
-        this.activities = activities;
-        this.goal = goal;
+    }
+
+    public DashboardResponse(
+            String userName,
+            String userRole,
+            List<StatDto> stats
+    ) {
+        this.userName = userName;
+        this.userRole = userRole;
+        this.stats = stats;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getUserRole() {
+        return userRole;
     }
 
     public List<StatDto> getStats() {
         return stats;
-    }
-
-    public List<ActivityDto> getActivities() {
-        return activities;
-    }
-
-    public GoalDto getGoal() {
-        return goal;
     }
 }

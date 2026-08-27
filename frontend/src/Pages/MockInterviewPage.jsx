@@ -53,7 +53,8 @@ function MockInterviewPage() {
             );
 
             if (!response.ok) {
-                throw new Error(`Failed to start interview: ${response.status}`);
+                const errMsg = await response.text();
+                throw new Error(errMsg || `Failed to start interview: ${response.status}`);
             }
 
             const data = await response.json();
@@ -66,7 +67,7 @@ function MockInterviewPage() {
                 return;
             }
 
-            setError("Unable to start the interview. Please try again.");
+            setError(error.message || "Unable to start the interview. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -99,7 +100,8 @@ function MockInterviewPage() {
             );
 
             if (!response.ok) {
-                throw new Error(`Failed to submit answer: ${response.status}`);
+                const errMsg = await response.text();
+                throw new Error(errMsg || `Failed to submit answer: ${response.status}`);
             }
 
             const data = await response.json();
@@ -112,7 +114,7 @@ function MockInterviewPage() {
                 return;
             }
 
-            setError("Unable to submit your answer. Please try again.");
+            setError(error.message || "Unable to submit your answer. Please try again.");
         } finally {
             setSubmitting(false);
         }

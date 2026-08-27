@@ -1,1 +1,16 @@
-{"name":"algomock-root","version":"1.0.0","private":true,"scripts":{"start":"start.bat","dev":"start.bat"}}
+{
+  "name": "algomock-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --kill-others -n \"BACKEND,FRONTEND\" -c \"cyan.bold,magenta.bold\" \"npm run backend\" \"npm run frontend\"",
+    "start": "concurrently --kill-others -n \"BACKEND,FRONTEND\" -c \"cyan.bold,magenta.bold\" \"npm run backend\" \"npm run frontend\"",
+    "build": "cd frontend && npm run build",
+    "backend": "cd backend && mvnw.cmd spring-boot:run",
+    "frontend": "cd frontend && npm run dev",
+    "start:windows": "start.bat"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}

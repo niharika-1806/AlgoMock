@@ -50,7 +50,8 @@ function ReviewPage() {
                 if (response.status === 401) {
                     setError("Your session has expired. Please log in again.");
                 } else {
-                    setError("Failed to review your code.");
+                    const errorMsg = await response.text();
+                    setError(errorMsg || "Failed to review your code.");
                 }
                 return;
             }

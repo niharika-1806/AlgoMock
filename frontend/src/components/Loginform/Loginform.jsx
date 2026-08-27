@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock, ArrowRight, Loader2, Sparkles, AlertCircle } from "lucide-react";
+import { API_BASE_URL } from "../../utils/api";
 import "./LoginForm.css";
 
 function LoginForm() {
@@ -75,7 +76,7 @@ function LoginForm() {
             setLoading(true);
 
             const response = await fetch(
-                "http://localhost:8080/api/auth/login",
+                `${API_BASE_URL}/api/auth/login`,
                 {
                     method: "POST",
                     headers: {
@@ -215,6 +216,11 @@ function LoginForm() {
                     </>
                 )}
             </button>
+
+            <div className="signup-footer-switch">
+                <span>Don't have an account? </span>
+                <Link to="/signup" className="switch-auth-link">Sign Up Free</Link>
+            </div>
 
             <div className="login-footer-hint">
                 <span>Demo user credentials: </span>

@@ -14,6 +14,8 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 
 @Configuration
 public class SecurityConfig {
@@ -26,20 +28,32 @@ public class SecurityConfig {
 
     // Defines our application's HTTP security rules
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http
+    ) throws Exception {
 
         http
+                .cors(Customizer.withDefaults())
+
                 .csrf(csrf -> csrf.disable())
+
                 .formLogin(form -> form.disable())
+
                 .httpBasic(basic -> basic.disable())
 
                 .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers(HttpMethod.OPTIONS, "/**")
+                        .permitAll()
+
                         .requestMatchers(
                                 "/api/auth/register",
                                 "/api/auth/login"
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                        )
+                        .permitAll()
+
+                        .anyRequest()
+                        .authenticated()
                 )
 
                 .oauth2ResourceServer(oauth2 ->

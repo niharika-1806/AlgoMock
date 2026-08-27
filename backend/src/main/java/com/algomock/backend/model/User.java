@@ -2,12 +2,8 @@
 
 package com.algomock.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 //Entity tells JPA that this class should be mapped to database table
 @Entity
@@ -37,6 +33,10 @@ public class User {
     private int dailyStreak;
 
     private String password;
+
+    private String role = "USER";
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 //    JPA requires no argument constructor for entity instantiation.
     public User() {
@@ -110,7 +110,20 @@ public class User {
         this.email = email;
     }
 
+    public String getRole() {
+        return role;
+    }
 
+    public void setRole(String role) {
+        this.role = role;
+    }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
 

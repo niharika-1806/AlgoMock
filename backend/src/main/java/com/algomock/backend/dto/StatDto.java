@@ -3,9 +3,9 @@ package com.algomock.backend.dto;
 public class StatDto {
 
     private String title;
-    private int value;
+    private String value;
 
-    public StatDto(String title, int value) {
+    public StatDto(String title, String value) {
         this.title = title;
         this.value = value;
     }
@@ -14,7 +14,7 @@ public class StatDto {
         return title;
     }
 
-    public int getValue() {
+    public String getValue() {
         return value;
     }
 }

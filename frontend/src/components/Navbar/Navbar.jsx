@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles, Code2, ArrowRight } from "lucide-react";
+import { API_BASE_URL } from "../../utils/api";
 import "./Navbar.css";
 
 function Navbar() {
@@ -8,14 +9,39 @@ function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(
         Boolean(localStorage.getItem("token"))
     );
+    const [isAdmin, setIsAdmin] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
 
+        async function checkAdminStatus() {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setIsLoggedIn(false);
+                setIsAdmin(false);
+                return;
+            }
+
+            setIsLoggedIn(true);
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setIsAdmin(data.role === "ADMIN");
+                } else {
+                    setIsAdmin(false);
+                }
+            } catch {
+                setIsAdmin(false);
+            }
+        }
+
         function handleAuthChange() {
-            setIsLoggedIn(
-                Boolean(localStorage.getItem("token"))
-            );
+            checkAdminStatus();
         }
 
         function handleScroll() {
@@ -26,6 +52,7 @@ function Navbar() {
             }
         }
 
+        checkAdminStatus();
         window.addEventListener("authChange", handleAuthChange);
         window.addEventListener("scroll", handleScroll);
 
@@ -61,28 +88,40 @@ function Navbar() {
 
                 <div className="nav-buttons">
                     {isLoggedIn ? (
-                        <Link
-                            to="/dashboard"
-                            className="nav-btn-secondary"
-                        >
-                            Dashboard
-                        </Link>
+                        <>
+                            {isAdmin && (
+                                <Link
+                                    to="/admin"
+                                    className="nav-btn-secondary"
+                                >
+                                    Admin
+                                </Link>
+                            )}
+                            <Link
+                                to="/dashboard"
+                                className="nav-btn-primary"
+                            >
+                                <span>Dashboard</span>
+                                <ArrowRight size={15} className="btn-arrow" />
+                            </Link>
+                        </>
                     ) : (
-                        <Link
-                            to="/login"
-                            className="nav-btn-secondary"
-                        >
-                            Log In
-                        </Link>
+                        <>
+                            <Link
+                                to="/login"
+                                className="nav-btn-secondary"
+                            >
+                                Log In
+                            </Link>
+                            <Link
+                                to="/signup"
+                                className="nav-btn-primary"
+                            >
+                                <span>Sign Up Free</span>
+                                <ArrowRight size={15} className="btn-arrow" />
+                            </Link>
+                        </>
                     )}
-
-                    <Link
-                        to={isLoggedIn ? "/dashboard" : "/login"}
-                        className="nav-btn-primary"
-                    >
-                        <span>{isLoggedIn ? "Open Dashboard" : "Get Started"}</span>
-                        <ArrowRight size={15} className="btn-arrow" />
-                    </Link>
                 </div>
 
             </nav>

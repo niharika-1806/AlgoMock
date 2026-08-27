@@ -28,10 +28,15 @@ public class AuthService {
     }
 
     public RegisterResponse register(RegisterRequest request){
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email already registered");
+        }
         User user = new User();
 
         user.setName(request.getName());
         user.setEmail(request.getEmail());
+        user.setRole("USER");
+        user.setCreatedAt(java.time.LocalDateTime.now());
 
         String hashedPassword =
                 passwordEncoder.encode(request.getPassword());
@@ -40,10 +45,13 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
+        String token = jwtService.generateToken(savedUser.getId());
+
         return new RegisterResponse(
                 savedUser.getId(),
                 savedUser.getName(),
-                savedUser.getEmail()
+                savedUser.getEmail(),
+                token
         );
     }
     public String login(LoginRequest request) {
@@ -64,5 +72,17 @@ public class AuthService {
         }
 
         return jwtService.generateToken(user.getId());
+    }
+
+    public com.algomock.backend.dto.UserProfileResponse getUserProfile(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return new com.algomock.backend.dto.UserProfileResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole() != null ? user.getRole() : "USER"
+        );
     }
 }

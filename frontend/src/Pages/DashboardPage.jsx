@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Sparkles, LogOut, Target, Clock, ArrowRight, History, Zap, CheckCircle2, RotateCw } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { Sparkles, LogOut, Target, Clock, ArrowRight, History, Zap, CheckCircle2, RotateCw, Shield } from "lucide-react";
 import "./DashboardPage.css";
 
 import StatCard from "../components/StatCard/StatCard";
@@ -121,13 +121,26 @@ function Dashboard() {
                         <p>Track your technical progress, refine code quality, and simulate live interviews.</p>
                     </div>
 
-                    <button
-                        className="dashboard-logout-btn"
-                        onClick={handleLogout}
-                    >
-                        <LogOut size={16} />
-                        <span>Sign Out</span>
-                    </button>
+                    <div className="header-right-actions">
+                        {dashboardData.userRole === "ADMIN" && (
+                            <Link
+                                to="/admin"
+                                className="dashboard-admin-btn"
+                                title="Open Platform Admin Portal"
+                            >
+                                <Shield size={16} />
+                                <span>Admin Portal</span>
+                            </Link>
+                        )}
+
+                        <button
+                            className="dashboard-logout-btn"
+                            onClick={handleLogout}
+                        >
+                            <LogOut size={16} />
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
                 </div>
 
                 {/* ================= QUICK STATS ================= */}

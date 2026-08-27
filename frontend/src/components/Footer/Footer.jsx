@@ -27,17 +27,19 @@ function Footer() {
                         <ul>
                             <li><a href="#features">Features</a></li>
                             <li><a href="#how-it-works">How It Works</a></li>
-                            <li><a href="/login">Mock Interviews</a></li>
-                            <li><a href="/login">Code Review</a></li>
+                            <li><a href="/signup">Create Account</a></li>
+                            <li><a href="/login">Sign In</a></li>
+                            <li><a href="/admin">Admin Portal</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-links">
-                        <h4>Resources</h4>
+                        <h4>Preparation</h4>
                         <ul>
+                            <li><a href="/login">Mock Interviews</a></li>
+                            <li><a href="/login">Code Review</a></li>
                             <li><a href="#practice">DSA Patterns</a></li>
                             <li><a href="#practice">Interview Guides</a></li>
-                            <li><a href="#practice">Complexity Cheatsheet</a></li>
                         </ul>
                     </div>
 
