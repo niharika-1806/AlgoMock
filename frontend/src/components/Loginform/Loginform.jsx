@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Mail, Lock, ArrowRight, Loader2, Sparkles, AlertCircle } from "lucide-react";
 import "./LoginForm.css";
 
 function LoginForm() {
@@ -10,6 +10,7 @@ function LoginForm() {
 
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -30,13 +31,11 @@ function LoginForm() {
         // -------------------------------
 
         if (email.trim() === "") {
-
             setEmailError("Email is required.");
             hasError = true;
         }
 
         if (password.trim() === "") {
-
             setPasswordError("Password is required.");
             hasError = true;
         }
@@ -50,15 +49,10 @@ function LoginForm() {
         // Email validation
         // -------------------------------
 
-        const emailPattern =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!emailPattern.test(email)) {
-
-            setEmailError(
-                "Please enter a valid email address."
-            );
-
+            setEmailError("Please enter a valid email address.");
             return;
         }
 
@@ -68,11 +62,7 @@ function LoginForm() {
         // -------------------------------
 
         if (password.length < 8) {
-
-            setPasswordError(
-                "Password must be at least 8 characters long."
-            );
-
+            setPasswordError("Password must be at least 8 characters long.");
             return;
         }
 
@@ -82,16 +72,15 @@ function LoginForm() {
         // -------------------------------
 
         try {
+            setLoading(true);
 
             const response = await fetch(
                 "http://localhost:8080/api/auth/login",
                 {
                     method: "POST",
-
                     headers: {
                         "Content-Type": "application/json"
                     },
-
                     body: JSON.stringify({
                         email: email.trim(),
                         password: password
@@ -105,11 +94,7 @@ function LoginForm() {
             // -------------------------------
 
             if (response.status === 401) {
-
-                setPasswordError(
-                    "Invalid email or password."
-                );
-
+                setPasswordError("Invalid email or password.");
                 return;
             }
 
@@ -119,11 +104,7 @@ function LoginForm() {
             // -------------------------------
 
             if (!response.ok) {
-
-                setPasswordError(
-                    "Something went wrong. Please try again."
-                );
-
+                setPasswordError("Something went wrong. Please try again.");
                 return;
             }
 
@@ -135,11 +116,7 @@ function LoginForm() {
             const token = await response.text();
 
             if (!token || token.trim() === "") {
-
-                setPasswordError(
-                    "Login failed. No authentication token received."
-                );
-
+                setPasswordError("Login failed. No authentication token received.");
                 return;
             }
 
@@ -148,91 +125,103 @@ function LoginForm() {
             // Store JWT
             // -------------------------------
 
-           localStorage.setItem(
-    "token",
-    token.trim()
-);
-
-window.dispatchEvent(
-    new Event("authChange")
-);
-
-navigate("/dashboard");
+            localStorage.setItem("token", token.trim());
+            window.dispatchEvent(new Event("authChange"));
+            navigate("/dashboard");
 
         } catch (error) {
-
-            console.error(
-                "Login error:",
-                error
-            );
-
-            setPasswordError(
-                "Unable to connect to the server. Please try again."
-            );
+            console.error("Login error:", error);
+            setPasswordError("Unable to connect to the server. Please try again.");
+        } finally {
+            setLoading(false);
         }
     }
 
 
     return (
         <form
-            className="login-form"
+            className="login-form-card"
             onSubmit={handleSubmit}
             noValidate
         >
+            <div className="login-header">
+                <div className="login-badge">
+                    <Sparkles size={13} />
+                    <span>Candidate Portal</span>
+                </div>
+                <h2>Welcome Back</h2>
+                <p>Sign in to continue your interview preparation.</p>
+            </div>
 
-            <h1>
-                Welcome Back 👋
-            </h1>
+            {/* Email Field */}
+            <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <div className={`input-wrapper ${emailError ? "has-error" : ""}`}>
+                    <Mail size={18} className="input-icon" />
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="you@company.com"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                        disabled={loading}
+                    />
+                </div>
+                {emailError && (
+                    <div className="form-error-msg">
+                        <AlertCircle size={14} />
+                        <span>{emailError}</span>
+                    </div>
+                )}
+            </div>
 
-            <p>
-                Continue your coding interview preparation.
-            </p>
+            {/* Password Field */}
+            <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <div className={`input-wrapper ${passwordError ? "has-error" : ""}`}>
+                    <Lock size={18} className="input-icon" />
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                        disabled={loading}
+                    />
+                </div>
+                {passwordError && (
+                    <div className="form-error-msg">
+                        <AlertCircle size={14} />
+                        <span>{passwordError}</span>
+                    </div>
+                )}
+            </div>
 
-
-            {/* Email */}
-
-            <input
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(event) =>
-                    setEmail(event.target.value)
-                }
-            />
-
-            {emailError && (
-                <p className="error">
-                    {emailError}
-                </p>
-            )}
-
-
-            {/* Password */}
-
-            <input
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(event) =>
-                    setPassword(event.target.value)
-                }
-            />
-
-            {passwordError && (
-                <p className="error">
-                    {passwordError}
-                </p>
-            )}
-
-
-            {/* Login */}
-
-            <button type="submit">
-                Login
+            {/* Submit Button */}
+            <button
+                type="submit"
+                className="login-submit-btn"
+                disabled={loading}
+            >
+                {loading ? (
+                    <>
+                        <Loader2 size={18} className="btn-spinner" />
+                        <span>Authenticating...</span>
+                    </>
+                ) : (
+                    <>
+                        <span>Sign In to AlgoMock</span>
+                        <ArrowRight size={16} />
+                    </>
+                )}
             </button>
 
+            <div className="login-footer-hint">
+                <span>Demo user credentials: </span>
+                <code>testuser@algomock.com / password123</code>
+            </div>
         </form>
     );
 }
 
-export default LoginForm;
+export default LoginForm;
