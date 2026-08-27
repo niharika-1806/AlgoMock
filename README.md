@@ -2,7 +2,7 @@
 
 <div align="center">
 
-  <img src="https://raw.githubusercontent.com/niharika-1806/AlgoMock/main/frontend/src/assets/Illustrations/hero.svg" alt="AlgoMock Banner" width="480" />
+  <img src="https://raw.githubusercontent.com/niharika-1806/AlgoMock/main/frontend/src/assets/Illustrations/hero.svg" alt="AlgoMock Banner" width="460" />
 
   <br />
 
@@ -31,28 +31,38 @@
 
 ---
 
+## 🌐 Live Web Application
+
+The frontend is live and deployed on Vercel:
+
+👉 **[https://algo-mock.vercel.app/](https://algo-mock.vercel.app/)**
+
+> **Note**: To use interactive AI code reviews and mock interview features with full persistence, ensure your local Spring Boot backend is running locally on port `8080`.
+
+---
+
 ## 🌟 Key Features
 
 ### 🔍 1. Instant AI Code Review & Complexity Analysis
-- **Static & Dynamic Analysis**: Evaluates submitted code for correctness, syntax issues, runtime efficiency, and edge case vulnerabilities.
+- **Static & Dynamic Analysis**: Evaluates submitted code for correctness, edge case vulnerabilities, and syntax issues.
 - **Big-O Notation Detection**: Automatically computes Time Complexity and Space Complexity.
-- **Actionable Optimization**: Provides line-by-line refactoring recommendations and a comprehensive quality score out of 100%.
+- **Actionable Optimization**: Provides line-by-line refactoring recommendations and a quality score out of 100%.
 
 ### 🎙️ 2. Interactive AI Mock Technical Interviews
-- **Simulated Interview Environment**: Dynamic multi-topic interviews (Algorithms, System Design, Frontend, Backend).
-- **Turn-by-Turn Evaluation**: AI interviewer asks follow-up questions, assesses communication clarity, and scores answers in real time.
-- **Detailed Transcripts**: Access full interview feedback logs, strengths, and areas for improvement.
+- **Simulated Interview Environment**: Dynamic multi-topic interviews (Algorithms & Data Structures, System Design, Frontend, Backend).
+- **Turn-by-Turn Evaluation**: AI interviewer asks adaptive follow-up questions, evaluates technical communication, and scores answers in real time.
+- **Detailed Transcripts**: Full interview performance logs with strengths and actionable improvement tips.
 
 ### 📊 3. Candidate Analytics & Progress Tracking
 - **Personalized Dashboard**: Visualizes daily practice streaks, total problems solved, average interview scores, and code quality progression.
-- **Submission History**: Complete historical archive of past reviews and interview transcripts.
+- **Submission History**: Complete historical archive of past reviews and mock interview transcripts.
 
 ### 🛡️ 4. Exclusive Platform Administrator Control Center
 - **Role-Based Access Control (RBAC)**: Strict JWT-enforced endpoint security separating standard candidates from administrators.
 - **Platform Telemetry**: Real-time aggregate platform metrics including total registered candidates, global code reviews, overall average scores, and individual user drill-down history.
 
 ### 💎 5. Modern Aurora Light UI
-- Designed with high-performance glassmorphism, floating ambient orbs, fluid micro-animations, and full mobile-first responsiveness.
+- High-performance glassmorphism, floating ambient orbs, fluid micro-animations, and full responsive layout.
 
 ---
 
@@ -60,7 +70,7 @@
 
 ```mermaid
 graph TD
-    User["👤 Candidate / Admin Browser"] -->|HTTPS / REST| Frontend["⚛️ React 19 + Vite SPA (Vercel)"]
+    User["👤 Candidate / Browser"] -->|HTTPS / REST| Frontend["⚛️ React 19 + Vite SPA (Vercel)"]
     Frontend -->|Bearer JWT| Gateway["🛡️ Spring Security 6 (RBAC Guard)"]
     Gateway --> Controllers["⚙️ Spring Boot REST Controllers"]
     
@@ -72,7 +82,7 @@ graph TD
     ReviewService --> Gemini["🤖 Google Gemini API (Flash Lite)"]
     InterviewService --> Gemini
     
-    ReviewService --> Postgres[("🐘 PostgreSQL 18 Database")]
+    ReviewService --> Postgres[("🐘 PostgreSQL Database")]
     InterviewService --> Postgres
     AdminService --> Postgres
     AuthService --> Postgres
@@ -87,9 +97,9 @@ graph TD
 | **Frontend** | React 19, Vite, React Router 7, Lucide React, CSS3 Glassmorphism |
 | **Backend** | Java 17+, Spring Boot 4, Spring Data JPA, Hibernate ORM, Maven |
 | **Security** | Spring Security 6, Stateless JWT (JSON Web Tokens), BCrypt Password Hashing |
-| **Database** | PostgreSQL 18 with relational entity mapping & text column indexing |
+| **Database** | PostgreSQL with relational entity mapping & text column indexing |
 | **AI / LLM** | Google Gemini API (`gemini-3.5-flash-lite`) |
-| **Deployment** | Vercel (Frontend SPA), Cloud-ready Backend (Render / Railway / Docker) |
+| **Deployment** | Vercel (Frontend SPA) |
 
 ---
 
@@ -100,8 +110,8 @@ AlgoMock/
 ├── frontend/                        # React + Vite Frontend
 │   ├── public/                      # Static assets & favicon
 │   ├── src/
-│   │   ├── components/              # Reusable UI components (Navbar, Footer, Hero, etc.)
-│   │   ├── Pages/                   # Landing, Dashboard, Review, Interview, Admin, Auth
+│   │   ├── components/              # UI components (Navbar, Footer, Hero, LoginForm, etc.)
+│   │   ├── Pages/                   # Landing, Dashboard, Review, Interview, Admin, Signup
 │   │   ├── utils/                   # Configurable API client & interceptors
 │   │   ├── App.jsx                  # Route definitions & ProtectedRoute guards
 │   │   └── main.jsx                 # Vite application entrypoint
@@ -129,81 +139,84 @@ AlgoMock/
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 How to Run Locally (For Developers & Contributors)
 
-### Prerequisites
-- **Node.js** (v18.0 or higher) & **npm**
-- **Java Development Kit (JDK)** 17 or higher
-- **PostgreSQL** 14+ installed and running locally
-- A **Google Gemini API Key** ([Get one from Google AI Studio](https://aistudio.google.com/))
+Follow these simple steps to set up and run the complete AlgoMock project on your local machine:
+
+### 1. Prerequisites
+Ensure you have the following installed on your machine:
+- **Node.js** (v18.0 or higher) — [Download Node.js](https://nodejs.org/)
+- **Java Development Kit (JDK)** (JDK 17 or higher) — [Download OpenJDK / Temurin](https://adoptium.net/)
+- **PostgreSQL** (v14 or higher) — [Download PostgreSQL](https://www.postgresql.org/download/)
+- **Google Gemini API Key** — [Get a Free Key from Google AI Studio](https://aistudio.google.com/)
 
 ---
 
-### 1. Clone the Repository
+### 2. Clone the Repository
 ```bash
 git clone https://github.com/niharika-1806/AlgoMock.git
 cd AlgoMock
 ```
 
-### 2. Configure Environment Variables
+---
 
-#### Backend (`backend/src/main/resources/application.properties`)
-Create or edit your application properties:
+### 3. Set Up PostgreSQL Database
+Open your PostgreSQL terminal (`psql`) or pgAdmin and create the database:
+```sql
+CREATE DATABASE algomock_db;
+```
+
+---
+
+### 4. Configure Backend Settings
+Open [`backend/src/main/resources/application.properties`](backend/src/main/resources/application.properties) and configure your database credentials and Gemini API Key:
+
 ```properties
 spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/algomock_db
 spring.datasource.username=postgres
 spring.datasource.password=YOUR_POSTGRES_PASSWORD
 
-app.jwt.secret=YOUR_64_CHARACTER_RANDOM_SECRET_KEY
+app.jwt.secret=mysecretkeyformyalgomockapplication1234567890
 app.gemini.api-key=YOUR_GEMINI_API_KEY
 app.gemini.model=gemini-3.5-flash-lite
 ```
 
-#### Frontend (`frontend/.env`)
-```env
-VITE_API_URL=http://localhost:8080
-```
+*(Alternatively, you can export `GEMINI_API_KEY` and `SPRING_DATASOURCE_PASSWORD` as system environment variables).*
 
 ---
 
-### 3. Run Locally (One-Command Startup)
+### 5. Launch the Application
 
-Install root dependencies and launch both Frontend & Backend concurrently:
+#### Option A: One-Command Runner (All Platforms)
+Install root dependencies and start both Frontend and Backend concurrently:
 ```bash
 npm install
 npm run dev
 ```
 
-Or on Windows, simply double-click **`start.bat`**.
-
-| Service | Local URL |
-| :--- | :--- |
-| **Frontend Web App** | [http://localhost:5173](http://localhost:5173) |
-| **Backend REST API** | [http://localhost:8080](http://localhost:8080) |
+#### Option B: Windows One-Click
+Double-click **`start.bat`** in the project root.
 
 ---
 
-## 🌐 Live Web Application
+### 6. Access the Application
 
-The frontend is live and deployed on Vercel:
+Once launched, both services will be active:
 
-👉 **[https://algo-mock.vercel.app/](https://algo-mock.vercel.app/)**
-
-Candidates can immediately sign up, submit code for instant Gemini AI review, and practice full technical interviews directly in the browser!
+| Service | URL | Description |
+| :--- | :--- | :--- |
+| **Frontend Web App** | **[http://localhost:5173](http://localhost:5173)** | React + Vite UI |
+| **Backend REST API** | **[http://localhost:8080](http://localhost:8080)** | Spring Boot API endpoints |
 
 ---
 
-## 🌐 Deploying to Vercel
+## 🌐 Deploying Frontend on Vercel
 
-1. Push your repository to **GitHub**.
-2. Go to [Vercel](https://vercel.com/) and click **Add New Project** → Import **`AlgoMock`**.
-3. Under **Build & Development Settings**:
-   - **Root Directory**: `.` *(auto-configured via `vercel.json`)* or set to `frontend`
-   - **Build Command**: `cd frontend && npm install && npm run build`
-   - **Output Directory**: `frontend/dist`
-4. In **Environment Variables**, add:
-   - `VITE_API_URL`: URL of your deployed Spring Boot backend.
-5. Click **Deploy**!
+If you fork or deploy your own copy of the frontend:
+1. Connect your GitHub repository to [Vercel](https://vercel.com/).
+2. Vercel automatically detects the included `vercel.json` configurations.
+3. In **Settings → Environment Variables**, set `VITE_API_URL` to your backend URL (or `http://localhost:8080` for local API pairing).
+4. Click **Deploy**.
 
 ---
 
