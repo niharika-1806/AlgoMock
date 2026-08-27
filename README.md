@@ -183,16 +183,13 @@ Or on Windows, simply double-click **`start.bat`**.
 
 ---
 
-## 🔑 Default Administrator Credentials
+## 🌐 Live Web Application
 
-Upon initial database startup, a dedicated administrator account is seeded automatically:
+The frontend is live and deployed on Vercel:
 
-| Field | Credentials |
-| :--- | :--- |
-| **Admin Portal URL** | `/admin` |
-| **Email** | `niharika@algomock.com` |
-| **Password** | `Admin@1806` |
-| **Role** | `ADMIN` |
+👉 **[https://algo-mock.vercel.app/](https://algo-mock.vercel.app/)**
+
+Candidates can immediately sign up, submit code for instant Gemini AI review, and practice full technical interviews directly in the browser!
 
 ---
 
