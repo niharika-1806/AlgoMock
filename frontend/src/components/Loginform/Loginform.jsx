@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock, ArrowRight, Loader2, Sparkles, AlertCircle } from "lucide-react";
 import { API_BASE_URL } from "../../utils/api";
-import "./LoginForm.css";
+import "./Loginform.css";
 
 function LoginForm() {
 
