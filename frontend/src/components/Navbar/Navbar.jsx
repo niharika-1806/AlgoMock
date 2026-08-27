@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import { Sparkles, Code2, ArrowRight } from "lucide-react";
 import "./Navbar.css";
 
 function Navbar() {
@@ -8,88 +8,86 @@ function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(
         Boolean(localStorage.getItem("token"))
     );
+    const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
 
         function handleAuthChange() {
-
             setIsLoggedIn(
                 Boolean(localStorage.getItem("token"))
             );
         }
 
-        window.addEventListener(
-            "authChange",
-            handleAuthChange
-        );
+        function handleScroll() {
+            if (window.scrollY > 20) {
+                setScrolled(true);
+            } else {
+                setScrolled(false);
+            }
+        }
+
+        window.addEventListener("authChange", handleAuthChange);
+        window.addEventListener("scroll", handleScroll);
 
         return () => {
-            window.removeEventListener(
-                "authChange",
-                handleAuthChange
-            );
+            window.removeEventListener("authChange", handleAuthChange);
+            window.removeEventListener("scroll", handleScroll);
         };
 
     }, []);
 
-
     return (
-        <nav className="navbar">
+        <header className={`navbar-wrapper ${scrolled ? "scrolled" : ""}`}>
+            <nav className="navbar">
 
-            <div className="logo">
-
-                <span className="logo-text">
-                    AlgoMock
-                </span>
-
-            </div>
-
-
-            <ul className="nav-links">
-
-                <li>Features</li>
-                <li>Practice</li>
-                <li>About</li>
-
-            </ul>
-
-
-            <div className="nav-buttons">
-
-                {isLoggedIn ? (
-
-                    <Link
-                        to="/dashboard"
-                        className="login-btn"
-                    >
-                        Dashboard
-                    </Link>
-
-                ) : (
-
-                    <Link
-                        to="/login"
-                        className="login-btn"
-                    >
-                        Login
-                    </Link>
-
-                )}
-
-
-                <Link
-                    to={isLoggedIn ? "/dashboard" : "/login"}
-                    className="primary-btn"
-                >
-                    {isLoggedIn
-                        ? "Go to Dashboard"
-                        : "Get Started"}
+                <Link to="/" className="logo">
+                    <div className="logo-icon-wrap">
+                        <Code2 className="logo-icon" size={20} />
+                    </div>
+                    <span className="logo-text">
+                        Algo<span>Mock</span>
+                    </span>
+                    <span className="live-status-pill">
+                        <span className="live-dot"></span>
+                        AI 2.0
+                    </span>
                 </Link>
 
-            </div>
+                <ul className="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#practice">Practice</a></li>
+                </ul>
 
-        </nav>
+                <div className="nav-buttons">
+                    {isLoggedIn ? (
+                        <Link
+                            to="/dashboard"
+                            className="nav-btn-secondary"
+                        >
+                            Dashboard
+                        </Link>
+                    ) : (
+                        <Link
+                            to="/login"
+                            className="nav-btn-secondary"
+                        >
+                            Log In
+                        </Link>
+                    )}
+
+                    <Link
+                        to={isLoggedIn ? "/dashboard" : "/login"}
+                        className="nav-btn-primary"
+                    >
+                        <span>{isLoggedIn ? "Open Dashboard" : "Get Started"}</span>
+                        <ArrowRight size={15} className="btn-arrow" />
+                    </Link>
+                </div>
+
+            </nav>
+        </header>
     );
 }
 
-export default Navbar;
+export default Navbar;
