@@ -1,0 +1,9 @@
+# Nixpacks build configuration for AlgoMock Spring Boot Backend on Railway
+[phases.setup]
+nixPkgs = ["openjdk17", "maven"]
+
+[phases.build]
+cmds = ["cd backend && mvn clean package -DskipTests"]
+
+[start]
+cmd = "java -Dserver.port=$PORT -jar backend/target/backend-0.0.1-SNAPSHOT.jar"
