@@ -1,3 +1,5 @@
+providers = []
+
 [phases.setup]
 nixPkgs = ["openjdk17", "maven"]
 
