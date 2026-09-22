@@ -43,16 +43,22 @@ public class DataSourceConfig {
 
                 int port = dbUri.getPort() == -1 ? 5432 : dbUri.getPort();
                 String dbName = dbUri.getPath();
-                if (dbName.startsWith("/")) {
+                if (dbName != null && dbName.startsWith("/")) {
                     dbName = dbName.substring(1);
                 }
-
+                String query = dbUri.getQuery();
                 String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s", dbUri.getHost(), port, dbName);
+                if (query != null && !query.isEmpty()) {
+                    jdbcUrl += "?" + query;
+                }
+                
+                System.out.println(">>> [DataSourceConfig] Initializing connection to Database host: " + dbUri.getHost() + ":" + port + "/" + dbName);
+                
                 config.setJdbcUrl(jdbcUrl);
                 config.setUsername(username);
                 config.setPassword(password);
             } catch (Exception e) {
-                // Fallback to rawUrl
+                System.err.println(">>> [DataSourceConfig] Failed to parse URI, falling back to raw URL: " + e.getMessage());
                 if (!rawUrl.startsWith("jdbc:")) {
                     config.setJdbcUrl("jdbc:" + rawUrl);
                 } else {
