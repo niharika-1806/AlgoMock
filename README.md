@@ -14,7 +14,7 @@
 
   <p align="center">
     <a href="https://algo-mock.vercel.app/"><img src="https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Frontend" /></a>
-    <a href="https://algomock-production.up.railway.app"><img src="https://img.shields.io/badge/Backend-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Live Backend" /></a>
+    <a href="https://algomock-backend-cf9v.onrender.com"><img src="https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render&logoColor=black" alt="Live Backend" /></a>
     <a href="https://github.com/niharika-1806/AlgoMock"><img src="https://img.shields.io/github/stars/niharika-1806/AlgoMock?style=for-the-badge&color=gold" alt="GitHub Stars" /></a>
     <a href="https://github.com/niharika-1806/AlgoMock/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License" /></a>
   </p>
@@ -37,8 +37,8 @@
 The full-stack application is deployed 24/7 across modern cloud infrastructure:
 
 - 🖥️ **Live Web Application (Frontend)**: **[https://algo-mock.vercel.app/](https://algo-mock.vercel.app/)** *(Hosted on Vercel Edge CDN)*
-- ⚙️ **Live REST API (Backend)**: **[https://algomock-production.up.railway.app](https://algomock-production.up.railway.app)** *(Hosted on Railway Cloud)*
-- 🐘 **Cloud Database**: **Managed PostgreSQL 18** *(Hosted on Railway)*
+- ⚙️ **Live REST API (Backend)**: **[https://algomock-backend-cf9v.onrender.com](https://algomock-backend-cf9v.onrender.com)** *(Hosted on Render Cloud)*
+- 🐘 **Cloud Database**: **Managed PostgreSQL 18** *(Hosted on Render)*
 
 ---
 
