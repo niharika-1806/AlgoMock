@@ -13,7 +13,8 @@
   </p>
 
   <p align="center">
-    <a href="https://algo-mock.vercel.app/"><img src="https://img.shields.io/badge/Live%20Demo-Vercel-blue?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" /></a>
+    <a href="https://algo-mock.vercel.app/"><img src="https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Frontend" /></a>
+    <a href="https://algomock-production.up.railway.app"><img src="https://img.shields.io/badge/Backend-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Live Backend" /></a>
     <a href="https://github.com/niharika-1806/AlgoMock"><img src="https://img.shields.io/github/stars/niharika-1806/AlgoMock?style=for-the-badge&color=gold" alt="GitHub Stars" /></a>
     <a href="https://github.com/niharika-1806/AlgoMock/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License" /></a>
   </p>
@@ -31,13 +32,13 @@
 
 ---
 
-## 🌐 Live Web Application
+## 🌐 Live Production Deployment
 
-The frontend is live and deployed on Vercel:
+The full-stack application is deployed 24/7 across modern cloud infrastructure:
 
-👉 **[https://algo-mock.vercel.app/](https://algo-mock.vercel.app/)**
-
-> **Note**: To use interactive AI code reviews and mock interview features with full persistence, ensure your local Spring Boot backend is running locally on port `8080`.
+- 🖥️ **Live Web Application (Frontend)**: **[https://algo-mock.vercel.app/](https://algo-mock.vercel.app/)** *(Hosted on Vercel Edge CDN)*
+- ⚙️ **Live REST API (Backend)**: **[https://algomock-production.up.railway.app](https://algomock-production.up.railway.app)** *(Hosted on Railway Cloud)*
+- 🐘 **Cloud Database**: **Managed PostgreSQL 18** *(Hosted on Railway)*
 
 ---
 
@@ -70,8 +71,8 @@ The frontend is live and deployed on Vercel:
 
 ```mermaid
 graph TD
-    User["👤 Candidate / Browser"] -->|HTTPS / REST| Frontend["⚛️ React 19 + Vite SPA (Vercel)"]
-    Frontend -->|Bearer JWT| Gateway["🛡️ Spring Security 6 (RBAC Guard)"]
+    User["👤 Candidate / Admin Browser"] -->|HTTPS / REST| Frontend["⚛️ React 19 + Vite SPA (Vercel Edge)"]
+    Frontend -->|Bearer JWT API Calls| Gateway["🛡️ Spring Security 6 RBAC (Railway Cloud)"]
     Gateway --> Controllers["⚙️ Spring Boot REST Controllers"]
     
     Controllers --> AuthService["🔑 AuthService & JWT Provider"]
@@ -82,7 +83,7 @@ graph TD
     ReviewService --> Gemini["🤖 Google Gemini API (Flash Lite)"]
     InterviewService --> Gemini
     
-    ReviewService --> Postgres[("🐘 PostgreSQL Database")]
+    ReviewService --> Postgres[("🐘 Managed PostgreSQL 18 (Railway)")]
     InterviewService --> Postgres
     AdminService --> Postgres
     AuthService --> Postgres
