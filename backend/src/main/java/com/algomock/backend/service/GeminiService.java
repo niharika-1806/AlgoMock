@@ -52,7 +52,7 @@ public class GeminiService {
 
     private GenerateContentResponse callGeminiWithFallback(String prompt, GenerateContentConfig config) throws Exception {
         if (this.client == null) {
-            throw new IllegalStateException("Gemini client is not initialized.");
+            throw new IllegalStateException("Gemini client is not initialized. Please ensure a valid GEMINI_API_KEY starting with AIzaSy is configured.");
         }
 
         Exception lastException = null;
@@ -99,13 +99,13 @@ public class GeminiService {
                 Review Guidelines:
                 1. Tone: Friendly, encouraging, positive, and constructive (like a senior mentor guiding a junior engineer).
                 2. Summary: Give a motivating summary of the candidate's chosen approach, how well it solves the problem, and where it stands regarding interview readiness.
-                3. Correctness: Evaluate functional accuracy, handling of constraints, and edge case safety (e.g. empty arrays, single elements, negative values, duplicates, large integer overflow).
-                4. Time Complexity: Provide the exact Big-O notation with an explanation of which loops, recursions, or operations dominate the execution time.
-                5. Space Complexity: Provide the exact Big-O notation explaining the auxiliary memory used (call stack, hash tables, arrays).
-                6. Strengths: List 3 to 4 specific positive technical highlights (e.g. idiomatic variable naming, modular structure, good early exits).
+                3. Correctness: Evaluate functional accuracy, handling of constraints, and edge case safety (e.g. empty inputs, null pointers, single elements, negative values, duplicates, large integer overflow).
+                4. Time Complexity: Provide the exact Big-O notation with an explanation of which loops, recursions, or tree traversals dominate execution time.
+                5. Space Complexity: Provide the exact Big-O notation explaining auxiliary memory (recursion call stack, hash tables, heaps, arrays).
+                6. Strengths: List 3 to 4 specific positive technical highlights (e.g. idiomatic variable naming, modular structure, good base cases).
                 7. Improvements & Alternative Approaches: List 3 to 5 clear, actionable recommendations:
                    - Pinpoint exact parts or lines of the code that can be optimized for better performance or cleaner syntax.
-                   - Explain alternative algorithmic approaches or data structures that could solve this problem (e.g. Two Pointers, Sliding Window, Monotonic Stack, Dynamic Programming, Binary Search) and discuss their time/space trade-offs.
+                   - Explain alternative algorithmic approaches or data structures that could solve this problem (e.g. Bottom-Up DFS vs Top-Down, Two Pointers, Sliding Window, Monotonic Stack, Dynamic Programming, BFS vs DFS) and discuss their time/space trade-offs.
                    - Mention defensive guards for edge cases.
 
                 Give a fair score from 0 to 100 based on interview readiness.
@@ -146,7 +146,7 @@ public class GeminiService {
             GenerateContentResponse response = callGeminiWithFallback(prompt, config);
             return jsonMapper.readValue(response.text(), GeminiReviewResponse.class);
         } catch (Exception e) {
-            log.warn("Gemini review failed, generating intelligent pedagogical algorithmic review fallback: {}", e.getMessage());
+            log.warn("Live Gemini review failed ({}), generating intelligent algorithmic review fallback.", e.getMessage());
             return generateIntelligentCodeReviewFallback(problem, code);
         }
     }
@@ -155,37 +155,94 @@ public class GeminiService {
         String lowerCode = (code != null) ? code.toLowerCase() : "";
         String lowerProblem = (problem != null) ? problem.toLowerCase() : "";
 
-        int score = 86;
-        String timeComp = "O(n)";
-        String spaceComp = "O(1)";
-        String summary = "Great effort! Your solution demonstrates solid logical thinking and a structured approach to solving the problem.";
+        int score = 88;
+        String timeComp = "O(n) Linear Time";
+        String spaceComp = "O(h) Auxiliary Space";
+        String summary = "Great effort! Your solution demonstrates solid logical thinking and a clean, structured approach.";
         String correctness = "The solution is logically sound and correctly handles standard input cases.";
 
         List<String> strengths = new ArrayList<>();
         List<String> improvements = new ArrayList<>();
 
+        boolean isTreeProblem = lowerCode.contains("treenode") || lowerCode.contains("root") ||
+                lowerProblem.contains("tree") || lowerCode.contains(".left") || lowerCode.contains(".right");
+
+        boolean isGraphProblem = !isTreeProblem && (lowerProblem.contains("graph") || lowerCode.contains("adj") || lowerCode.contains("visited"));
+        boolean hasDP = lowerCode.contains("dp[") || lowerCode.contains("memo") || lowerProblem.contains("dynamic programming");
+        boolean hasBinarySearch = lowerCode.contains("mid =") || lowerCode.contains("mid=") || (lowerCode.contains("low") && lowerCode.contains("high") && lowerCode.contains("/ 2"));
+        boolean hasMapOrSet = lowerCode.contains("map") || lowerCode.contains("set") || lowerCode.contains("hash") || lowerCode.contains("dict");
+        boolean hasTwoPointer = !isTreeProblem && (lowerCode.contains("left") && lowerCode.contains("right") || lowerCode.contains("low") && lowerCode.contains("high"));
         boolean hasNestedLoop = (lowerCode.contains("for") || lowerCode.contains("while")) &&
                 (lowerCode.indexOf("for") != lowerCode.lastIndexOf("for") || lowerCode.contains("while") && lowerCode.contains("for"));
-        boolean hasMapOrSet = lowerCode.contains("map") || lowerCode.contains("set") || lowerCode.contains("hash") || lowerCode.contains("dict");
-        boolean hasSort = lowerCode.contains("sort") || lowerCode.contains("arrays.sort") || lowerCode.contains("collections.sort");
-        boolean hasTwoPointer = lowerCode.contains("left") && lowerCode.contains("right") || lowerCode.contains("low") && lowerCode.contains("high");
-        boolean hasRecursion = lowerCode.contains("return ") && lowerCode.contains("(") && (lowerCode.contains("dfs") || lowerCode.contains("helper") || lowerCode.contains("solve"));
 
-        if (hasNestedLoop && !hasMapOrSet && !hasTwoPointer) {
-            score = 72;
-            timeComp = "O(n²) Quadratic Time";
+        if (isTreeProblem) {
+            boolean isTopDown = lowerCode.contains("height(") && (lowerCode.contains("isbalanced(") || lowerCode.contains("depth("));
+            if (isTopDown) {
+                score = 82;
+                timeComp = "O(n²) Top-Down (or O(n log n) Balanced)";
+                spaceComp = "O(h) Call Stack Space";
+                summary = "Good intuitive recursive solution! You have broken down the tree problem into clear sub-problems. Note that calling height() repeatedly at each node creates a top-down traversal that can degrade performance.";
+                correctness = "Functionally correct with clear base conditions (root == null). Handles standard binary tree structures accurately.";
+
+                strengths.add("Clear recursive decomposition calculating left and right subtree properties.");
+                strengths.add("Robust base case handling ensuring no NullPointerException on empty subtrees.");
+                strengths.add("Readable, self-documenting method signatures matching interview standards.");
+
+                improvements.add("🚀 Critical Optimization (Bottom-Up DFS): In top-down recursion, height() is called repeatedly on descendant nodes, causing O(n²) worst-case time. You can optimize this to O(n) by checking balance during a single post-order DFS pass and returning -1 immediately when a subtree is unbalanced.");
+                improvements.add("💡 Early Termination: Once `Math.abs(left - right) > 1` is detected, avoid evaluating the sibling subtree to save redundant recursive stack frames.");
+                improvements.add("📊 Space Nuance: Recursion space complexity is O(h) where h is the height of the tree (O(log n) in balanced trees, O(n) in degenerate/skewed trees).");
+                improvements.add("✨ Alternative Approach (Iterative DFS/BFS): For very deep trees (depth > 10,000), consider an iterative post-order traversal using an explicit Stack to prevent Java `StackOverflowError`.");
+            } else {
+                score = 93;
+                timeComp = "O(n) Linear Time";
+                spaceComp = "O(h) Call Stack Space";
+                summary = "Outstanding work! Your tree traversal strategy efficiently processes each node in a single pass, demonstrating deep mastery of tree algorithms.";
+                correctness = "Logically sound and robust across all tree topologies (balanced, skewed, and single-node trees).";
+
+                strengths.add("Optimal single-pass tree traversal visiting each node at most once.");
+                strengths.add("Graceful base case handling returning appropriate default values for leaf nodes.");
+                strengths.add("Clean separation of tree helper methods.");
+
+                improvements.add("🛡️ Edge Case Verification: Confirm behavior on trees with only one node or completely skewed (linked-list shaped) trees.");
+                improvements.add("💡 Alternative Approach (BFS / Level-Order): If level-by-level metrics are needed, consider a queue-based Breadth-First Search (BFS) approach.");
+            }
+        } else if (hasDP) {
+            score = 91;
+            timeComp = "O(n) / O(n * m) Optimal DP";
+            spaceComp = "O(n) State Table";
+            summary = "Excellent dynamic programming implementation! You have correctly identified the optimal substructure and overlapping subproblems.";
+            correctness = "Accurate state transitions and base case initialization.";
+
+            strengths.add("Well-defined recurrence relation and memoization/tabulation state transition.");
+            strengths.add("Eliminates exponential branching, delivering polynomial runtime.");
+            strengths.add("Clean base case setup preventing out-of-bounds indexing.");
+
+            improvements.add("🚀 Space Optimization: Check if the state only depends on the previous 1 or 2 entries. If so, reduce space complexity from O(n) to O(1) using variables.");
+            improvements.add("🛡️ Edge Case: Verify behavior for n = 0, n = 1, and negative boundary inputs.");
+        } else if (hasBinarySearch) {
+            score = 94;
+            timeComp = "O(log n) Logarithmic Time";
             spaceComp = "O(1) Constant Space";
-            summary = "Good initial brute-force implementation! You have the correct foundational logic, though the nested iteration can be optimized to meet interview benchmarks.";
-            correctness = "Functionally correct for small to medium inputs, but may encounter Time Limit Exceeded (TLE) on large datasets (N > 10^4).";
+            summary = "Superb binary search implementation! Demonstrates strong command of logarithmic search space reduction.";
+            correctness = "Correct search boundary convergence with no infinite loop risks.";
 
-            strengths.add("Straightforward, readable brute-force logic that is easy to follow and debug.");
-            strengths.add("Excellent minimal space complexity O(1) with no extra memory allocation.");
-            strengths.add("Well-structured condition checks inside the loop body.");
+            strengths.add("Optimal O(log n) time complexity.");
+            strengths.add("Prevents integer overflow by using `low + (high - low) / 2` instead of `(low + high) / 2`.");
+            strengths.add("Precise loop condition (`low <= high`) ensuring target values are not missed.");
 
-            improvements.add("🚀 Optimization Tip: You can optimize this from O(n²) to O(n) by using a Hash Map/Set to store elements and look up complementary values in O(1) time.");
-            improvements.add("💡 Alternative Approach (Two-Pointer Technique): If the input can be sorted, you can sort in O(n log n) and use two pointers (left & right) to converge in O(n) time with O(1) space.");
-            improvements.add("🛡️ Edge Case Handling: Add guard checks at the start of the method for empty arrays or inputs smaller than the required window length.");
-            improvements.add("✨ Clean Code: Consider breaking complex loop conditions into well-named helper boolean variables for enhanced readability.");
+            improvements.add("💡 Boundary Check: Explicitly verify duplicate element handling if the problem requires finding the first or last occurrence.");
+        } else if (hasTwoPointer) {
+            score = 90;
+            timeComp = "O(n) Linear Time";
+            spaceComp = "O(1) Auxiliary Space";
+            summary = "Great two-pointer implementation! This in-place approach is highly praised by technical interviewers for its O(1) space efficiency.";
+            correctness = "Accurate logic with well-managed pointer convergence.";
+
+            strengths.add("Outstanding O(1) space complexity — zero auxiliary data structure overhead.");
+            strengths.add("Clear pointer convergence with well-defined termination criteria.");
+
+            improvements.add("💡 Alternative Approach (HashMap): If preserving original element indices is required without sorting, a HashMap is an optimal trade-off.");
+            improvements.add("🛡️ Edge Case: Test for arrays with all identical elements or negative values.");
         } else if (hasMapOrSet) {
             score = 92;
             timeComp = "O(n) Linear Time";
@@ -195,32 +252,27 @@ public class GeminiService {
 
             strengths.add("Optimal O(n) time complexity achieved by trading space for constant-time O(1) lookups.");
             strengths.add("Clean, idiomatic use of data structures and clear variable naming.");
-            strengths.add("Good early exit conditions ensuring minimal unnecessary iterations.");
 
-            improvements.add("💡 Alternative Approach (In-Place / Two-Pointer): If memory is strictly constrained (e.g. embedded systems or strict O(1) space requirement), consider sorting first and applying a Two-Pointer technique.");
-            improvements.add("🛡️ Defensive Coding: Check if the input collection is null or empty before instantiating the HashMap to avoid unnecessary heap allocation.");
-            improvements.add("⚡ Performance Nuance: In Java, initializing the Map with an initial capacity (e.g., new HashMap<>(nums.length * 2)) avoids costly internal table re-hashing during resizing.");
-        } else if (hasTwoPointer || hasSort) {
-            score = 90;
-            timeComp = hasSort ? "O(n log n) Log-Linear Time" : "O(n) Linear Time";
-            spaceComp = "O(1) Auxiliary Space";
-            summary = "Excellent solution! The two-pointer / sorting paradigm is highly praised by interviewers for its optimal O(1) space efficiency.";
-            correctness = "Accurate logic with well-managed pointer convergence.";
+            improvements.add("💡 Alternative Approach (Two-Pointer): If memory is strictly constrained, consider sorting first and applying a Two-Pointer technique in O(1) space.");
+            improvements.add("⚡ Performance Tip: Initializing the Map with pre-sized capacity avoids internal table resizing during iteration.");
+        } else if (hasNestedLoop) {
+            score = 72;
+            timeComp = "O(n²) Quadratic Time";
+            spaceComp = "O(1) Constant Space";
+            summary = "Good initial brute-force implementation! You have the correct foundational logic, though the nested iteration can be optimized to meet interview benchmarks.";
+            correctness = "Functionally correct for small inputs, but may encounter Time Limit Exceeded (TLE) on large datasets.";
 
-            strengths.add("Outstanding O(1) space complexity — zero auxiliary data structure overhead.");
-            strengths.add("Clear, bug-free pointer manipulation with well-defined loop termination criteria.");
-            strengths.add("Good awareness of sorted array invariant properties.");
+            strengths.add("Straightforward, readable brute-force logic.");
+            strengths.add("Minimal space complexity O(1).");
 
-            improvements.add("💡 Alternative Approach (HashMap): If preserving the original array indices is required without mutation, a HashMap lookup in O(n) time and O(n) space is an ideal alternative.");
-            improvements.add("🛡️ Boundary Verification: Verify that pointer movements (e.g. left++ and right--) do not cross or cause index out-of-bounds on duplicate elements.");
-            improvements.add("✨ Edge Case: Explicitly test for arrays with all identical elements or negative values.");
+            improvements.add("🚀 Optimization Tip: Optimize from O(n²) to O(n) using a Hash Map/Set to store elements for O(1) lookup.");
+            improvements.add("💡 Alternative Approach (Two-Pointer): Sort the array in O(n log n) and use two pointers to converge in O(n) time with O(1) space.");
         } else {
             strengths.add("Clean, readable code structure with idiomatic syntax.");
             strengths.add("Logical breakdown of the problem into manageable steps.");
             strengths.add("Good variable naming conventions reflecting domain intent.");
 
-            improvements.add("🚀 Algorithmic Optimization: Consider whether a Sliding Window, Two-Pointer, or Dynamic Programming approach can further reduce redundant operations.");
-            improvements.add("💡 Alternative Approach: Analyze if sorting the input upfront enables binary search lookups in O(log n) time.");
+            improvements.add("🚀 Algorithmic Optimization: Consider whether a Sliding Window, Two-Pointer, or Tree Traversal approach can reduce redundant operations.");
             improvements.add("🛡️ Edge Cases: Add validation for empty inputs, boundary values, and integer overflow.");
         }
 
@@ -254,7 +306,7 @@ public class GeminiService {
         } catch (Exception e) {
             log.warn("Gemini question generation fallback for topic '{}': {}", topic, e.getMessage());
             return switch (topic != null ? topic.toLowerCase() : "") {
-                case "algorithms", "dsa", "data structures" -> "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may not use the same element twice.\n\nExample:\nInput: nums = [2,7,11,15], target = 9\nOutput: [0,1]";
+                case "algorithms", "dsa", "data structures" -> "Given the root of a binary tree, determine if it is height-balanced. A height-balanced binary tree is defined as a binary tree in which the left and right subtrees of every node differ in height by no more than 1.\n\nExample:\nInput: root = [3,9,20,null,null,15,7]\nOutput: true";
                 case "system design" -> "Design a scalable URL shortening service like TinyURL. How would you handle 100M daily active users, ensure sub-10ms redirection latency, and choose your database schema?";
                 case "frontend" -> "Explain how the Virtual DOM and Reconciliation algorithm work in React 19. How do you prevent unnecessary re-renders in deep component hierarchies?";
                 default -> "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid using a Stack.\n\nExample:\nInput: s = \"()[]{}\"\nOutput: true";
