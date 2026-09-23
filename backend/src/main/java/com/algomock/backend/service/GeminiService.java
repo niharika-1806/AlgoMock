@@ -5,10 +5,11 @@ import com.google.genai.Client;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Schema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.json.JsonMapper;
-import com.google.genai.types.GenerateContentResponse;
 import com.algomock.backend.dto.GeminiInterviewEvaluationResponse;
 
 import java.util.List;
@@ -17,21 +18,56 @@ import java.util.Map;
 @Service
 public class GeminiService {
 
+    private static final Logger log = LoggerFactory.getLogger(GeminiService.class);
     private final Client client;
     private final JsonMapper jsonMapper;
-    private final String modelName;
+    private final String primaryModelName;
+    private final List<String> fallbackModels = List.of(
+            "gemini-2.5-flash",
+            "gemini-2.0-flash",
+            "gemini-1.5-flash",
+            "gemini-2.5-flash-lite"
+    );
 
     public GeminiService(
             @Value("${app.gemini.api-key}") String apiKey,
-            @Value("${app.gemini.model:gemini-3.5-flash-lite}") String modelName,
+            @Value("${app.gemini.model:gemini-2.5-flash}") String modelName,
             JsonMapper jsonMapper
     ) {
         this.client = Client.builder()
                 .apiKey(apiKey)
                 .build();
 
-        this.modelName = modelName;
+        this.primaryModelName = (modelName == null || modelName.contains("3.5")) ? "gemini-2.5-flash" : modelName;
         this.jsonMapper = jsonMapper;
+    }
+
+    private GenerateContentResponse callGeminiWithFallback(String prompt, GenerateContentConfig config) throws Exception {
+        Exception lastException = null;
+
+        // Try primary model first
+        try {
+            return client.models.generateContent(this.primaryModelName, prompt, config);
+        } catch (Exception e) {
+            log.warn("Primary Gemini model '{}' failed: {}. Trying fallback models...", this.primaryModelName, e.getMessage());
+            lastException = e;
+        }
+
+        // Try fallback models sequentially
+        for (String fallback : fallbackModels) {
+            if (fallback.equalsIgnoreCase(this.primaryModelName)) {
+                continue;
+            }
+            try {
+                log.info("Attempting Gemini request with fallback model '{}'", fallback);
+                return client.models.generateContent(fallback, prompt, config);
+            } catch (Exception e) {
+                log.warn("Fallback model '{}' failed: {}", fallback, e.getMessage());
+                lastException = e;
+            }
+        }
+
+        throw new RuntimeException("All Gemini AI models are currently busy. Please retry in a few seconds.", lastException);
     }
 
     public GeminiReviewResponse reviewCode(
@@ -113,18 +149,14 @@ public class GeminiService {
                         .responseSchema(responseSchema)
                         .build();
 
-        GenerateContentResponse response =
-                client.models.generateContent(
-                        this.modelName,
-                        prompt,
-                        config
-                );
+        GenerateContentResponse response = callGeminiWithFallback(prompt, config);
 
         return jsonMapper.readValue(
                 response.text(),
                 GeminiReviewResponse.class
         );
     }
+
     public String generateInterviewQuestion(String topic) {
 
         String prompt = """
@@ -139,15 +171,15 @@ public class GeminiService {
             Return only the interview question.
             """.formatted(topic);
 
-        GenerateContentResponse response =
-                client.models.generateContent(
-                        this.modelName,
-                        prompt,
-                        null
-                );
-
-        return response.text();
+        try {
+            GenerateContentResponse response = callGeminiWithFallback(prompt, null);
+            return response.text();
+        } catch (Exception e) {
+            log.error("Failed to generate interview question: {}", e.getMessage());
+            return "Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to target. You may not use the same element twice.";
+        }
     }
+
     public GeminiInterviewEvaluationResponse evaluateInterviewAnswer(
             String question,
             String answer
@@ -221,12 +253,7 @@ public class GeminiService {
                         .responseSchema(responseSchema)
                         .build();
 
-        GenerateContentResponse response =
-                client.models.generateContent(
-                        this.modelName,
-                        prompt,
-                        config
-                );
+        GenerateContentResponse response = callGeminiWithFallback(prompt, config);
 
         return jsonMapper.readValue(
                 response.text(),
