@@ -7,6 +7,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import org.springframework.beans.factory.annotation.Value;
+
 @Configuration
 public class SecurityConfig {
 
@@ -22,27 +30,35 @@ public class SecurityConfig {
             throws Exception {
 
         http
-                // We are building a REST API, so disable CSRF for now
                 .csrf(csrf -> csrf.disable())
-
-                // We are not using Spring Security's default login page
                 .formLogin(form -> form.disable())
-
-                // We are not using HTTP Basic authentication
                 .httpBasic(basic -> basic.disable())
 
-                // Define which endpoints are publicly accessible
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/register",
-                                "/api/auth/login",
-                                "/api/dashboard"
+                                "/api/auth/login"
                         ).permitAll()
-
-                        // Everything else requires authentication
                         .anyRequest().authenticated()
+                )
+
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwt -> {})
                 );
 
         return http.build();
+    }
+    @Bean
+    public JwtDecoder jwtDecoder(@Value("${app.jwt.secret}") String secret) {
+
+        SecretKeySpec key = new SecretKeySpec(
+                secret.getBytes(StandardCharsets.UTF_8),
+                "HmacSHA256"
+        );
+
+        return NimbusJwtDecoder
+                .withSecretKey(key)
+                .macAlgorithm(MacAlgorithm.HS256)
+                .build();
     }
 }

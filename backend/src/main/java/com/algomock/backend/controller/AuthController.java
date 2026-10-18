@@ -35,20 +35,14 @@ public class AuthController {
             @RequestBody LoginRequest request
     ) {
 
-        User user = authService.login(request);
+        String token = authService.login(request);
 
-        if (user == null) {
+        if (token == null) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid email or password");
         }
 
-        return ResponseEntity.ok(
-                new RegisterResponse(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail()
-                )
-        );
+        return ResponseEntity.ok(token);
     }
 }
