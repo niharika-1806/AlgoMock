@@ -4,6 +4,9 @@ import { Routes, Route } from "react-router-dom";
 import LandingPage from "./Pages/LandingPage";
 import LoginPage from "./Pages/LoginPage";
 import Dashboard from "./Pages/DashboardPage";
+import ReviewPage from "./Pages/ReviewPage";
+import ReviewHistoryPage from "./Pages/ReviewHistoryPage";
+import ReviewDetailsPage from "./Pages/ReviewDetailsPage";
 
 function App() {
 
@@ -27,6 +30,31 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+            <Route
+                path="/review"
+                element={
+                <ProtectedRoute>
+                    <ReviewPage />
+                </ProtectedRoute>
+            
+                }
+            />
+            <Route
+                path="/review-history"
+                element={
+                <ProtectedRoute>
+                <ReviewHistoryPage />
+                </ProtectedRoute>
+                }
+            />
+            <Route
+    path="/review-history/:id"
+    element={
+        <ProtectedRoute>
+            <ReviewDetailsPage />
+        </ProtectedRoute>
+    }
+/>
         </Routes>
     );
 
