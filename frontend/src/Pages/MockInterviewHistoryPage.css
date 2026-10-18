@@ -1,0 +1,155 @@
+.mock-history-page {
+    min-height: 100vh;
+    padding: 40px 24px 80px;
+    background: #0f172a;
+    color: #f8fafc;
+}
+
+.mock-history-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.back-dashboard {
+    display: inline-block;
+    margin-bottom: 35px;
+    color: #93c5fd;
+    text-decoration: none;
+}
+
+.back-dashboard:hover {
+    text-decoration: underline;
+}
+
+.mock-history-header {
+    margin-bottom: 35px;
+}
+
+.mock-history-header h1 {
+    margin: 0 0 10px;
+    font-size: 42px;
+}
+
+.mock-history-header p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 18px;
+}
+
+.mock-history-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.mock-history-card {
+    padding: 24px;
+    border-radius: 16px;
+    background: #1e293b;
+    border: 1px solid #334155;
+}
+
+.mock-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.topic-label {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #60a5fa;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.mock-history-card h2 {
+    margin: 0 0 7px;
+    font-size: 21px;
+}
+
+.interview-date {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.mock-score {
+    min-width: 72px;
+    padding: 10px;
+    border-radius: 12px;
+    background: #0f172a;
+    color: #60a5fa;
+    text-align: center;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.mock-score small {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.mock-feedback-preview {
+    margin: 20px 0;
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+.view-interview-link {
+    color: #60a5fa;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.view-interview-link:hover {
+    text-decoration: underline;
+}
+
+.empty-mock-history,
+.mock-history-loading {
+    min-height: 100vh;
+    padding: 80px 24px;
+    text-align: center;
+    background: #0f172a;
+    color: #f8fafc;
+}
+
+.empty-mock-history p {
+    color: #94a3b8;
+}
+
+.start-interview-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+}
+
+.mock-history-error {
+    padding: 15px;
+    border-radius: 10px;
+    background: #450a0a;
+    border: 1px solid #7f1d1d;
+    color: #fecaca;
+}
+
+.mock-history-actions {
+    margin-top: 15px;
+}
+
+@media (max-width: 800px) {
+
+    .mock-history-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mock-history-header h1 {
+        font-size: 34px;
+    }
+}

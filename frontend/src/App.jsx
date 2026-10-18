@@ -7,6 +7,9 @@ import Dashboard from "./Pages/DashboardPage";
 import ReviewPage from "./Pages/ReviewPage";
 import ReviewHistoryPage from "./Pages/ReviewHistoryPage";
 import ReviewDetailsPage from "./Pages/ReviewDetailsPage";
+import MockInterviewPage from "./Pages/MockInterviewPage";
+import MockInterviewHistoryPage from "./Pages/MockInterviewHistoryPage";
+import MockInterviewDetailsPage from "./Pages/MockInterviewDetailsPage";
 
 function App() {
 
@@ -52,6 +55,30 @@ function App() {
     element={
         <ProtectedRoute>
             <ReviewDetailsPage />
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/mock-interview"
+    element={
+        <ProtectedRoute>
+            <MockInterviewPage />
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/mock-interview-history"
+    element={
+        <ProtectedRoute>
+            <MockInterviewHistoryPage />
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/mock-interview/:id"
+    element={
+        <ProtectedRoute>
+            <MockInterviewDetailsPage />
         </ProtectedRoute>
     }
 />
