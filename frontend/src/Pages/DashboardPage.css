@@ -1,0 +1,380 @@
+.dashboard{
+
+    min-height:100vh;
+
+    padding:25px;
+
+}
+.dashboard-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    margin-bottom:40px;
+
+}
+.stats-grid{
+
+    display:grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap:20px;
+
+}
+.stat-card{
+
+    background:#1f2937;
+
+    border-radius:12px;
+
+    padding:24px;
+
+}
+.stat-card h3{
+
+    font-size:18px;
+
+    font-weight:500;
+
+    color:#d1d5db;
+
+    margin-bottom:15px;
+
+}
+.stat-card p{
+
+    font-size:36px;
+
+    font-weight:700;
+
+    color:white;
+
+}
+.features-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2, minmax(350px, 1fr));
+
+    gap:24px;
+
+    align-items:stretch;
+
+}
+.feature-card{
+
+    background:#1f2937;
+
+    border-radius:16px;
+
+    padding:32px;
+
+    transition:0.3s;
+
+    cursor:pointer;
+
+    width:100%;
+
+    box-sizing:border-box;
+
+}
+.feature-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    text-align:left;
+
+}
+.feature-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 12px 30px rgba(0,0,0,0.3);
+
+}
+.feature-card h3{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    font-size:22px;
+
+    margin-bottom:15px;
+
+}
+.feature-card p{
+
+    
+    color:#9ca3af;
+
+    line-height:1.6;
+
+    margin-bottom:20px;
+
+}
+.feature-card button{
+
+    background:var(--primary);
+
+    color:white;
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    transition:0.3s;
+
+    align-self:flex-start;
+
+
+}
+.feature-card button:hover{
+
+    opacity:0.9;
+
+}
+
+
+.stats-section h2,
+.features-section h2,
+.activity-section h2,
+.goal-section h2{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    margin-bottom:30px;
+
+}
+.header-left h1{
+
+    font-size:42px;
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+}
+
+.header-left p{
+
+    color:#9ca3af;
+
+    font-size:18px;
+
+}
+.activity-section{
+
+    margin-top:60px;
+
+}
+.activity-section h2{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    margin-bottom:30px;
+
+}
+.activity-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+.activity-item{
+
+    background:#1f2937;
+
+    padding:20px 24px;
+
+    border-radius:12px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    transition:0.3s;
+
+}
+.activity-item:hover{
+
+    transform:translateX(5px);
+
+}
+.activity-item small{
+
+    color:#9ca3af;
+
+}
+.goal-section{
+
+    margin-top:60px;
+
+}
+.goal-card{
+
+    background:#1f2937;
+
+    border-radius:16px;
+
+    padding:30px;
+
+}
+.goal-card h3{
+
+
+    margin-bottom:10px;
+
+    font-size:24px;
+
+    font-weight:700;
+
+    /* padding:20px 24px; */
+}
+.goal-card p{
+
+    color:#9ca3af;
+
+    margin-bottom:20px;
+
+
+}
+.progress-bar{
+
+    height:10px;
+
+    margin-bottom:18px;
+
+    width:100%;
+
+
+    background:#374151;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+
+}
+.progress-fill{
+
+    width:50%;
+
+    height:100%;
+
+    background:#2563eb;
+
+}
+.goal-card button{
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+    
+    font-size:15px;
+
+}
+.goal-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:12px;
+}
+.goal-header span{
+
+    font-size:18px;
+    
+    font-weight:600;
+
+    color:var(--primary);
+
+}
+.goal-description{
+
+    color:var(--secondary-text);
+
+    margin:12px 0 18px;
+
+    font-size:17px;
+
+}
+@media (max-width: 768px){
+
+    .dashboard{
+
+        padding:24px;
+
+    }
+
+    .dashboard-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:20px;
+
+    }
+
+    .stats-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .features-grid{
+
+        grid-template-columns:1fr;
+
+    }
+    .dashboard-header h1{
+
+    font-size:42px;
+
+    line-height:1.2;
+
+    }
+    .stat-card{
+
+    padding:20px;
+    
+    }
+
+}

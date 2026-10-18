@@ -1,0 +1,25 @@
+:root {
+  --primary: #2563EB;
+  --background: #0F172A;
+  --text: #FFFFFF;
+  --secondary-text: #CBD5E1;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+  background: var(--background);
+  color: var(--text);
+}
