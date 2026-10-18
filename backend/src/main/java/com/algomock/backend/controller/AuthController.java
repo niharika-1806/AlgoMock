@@ -45,4 +45,15 @@ public class AuthController {
 
         return ResponseEntity.ok(token);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.oauth2.jwt.Jwt jwt
+    ) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Long userId = Long.parseLong(jwt.getSubject());
+        return ResponseEntity.ok(authService.getUserProfile(userId));
+    }
 }

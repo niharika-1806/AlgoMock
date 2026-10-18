@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 
 import LandingPage from "./Pages/LandingPage";
 import LoginPage from "./Pages/LoginPage";
+import SignupPage from "./Pages/SignupPage";
 import Dashboard from "./Pages/DashboardPage";
 import ReviewPage from "./Pages/ReviewPage";
 import ReviewHistoryPage from "./Pages/ReviewHistoryPage";
@@ -10,6 +11,7 @@ import ReviewDetailsPage from "./Pages/ReviewDetailsPage";
 import MockInterviewPage from "./Pages/MockInterviewPage";
 import MockInterviewHistoryPage from "./Pages/MockInterviewHistoryPage";
 import MockInterviewDetailsPage from "./Pages/MockInterviewDetailsPage";
+import AdminPage from "./Pages/AdminPage";
 
 function App() {
 
@@ -23,6 +25,20 @@ function App() {
             <Route
                 path="/login"
                 element={<LoginPage />}
+            />
+
+            <Route
+                path="/signup"
+                element={<SignupPage />}
+            />
+
+            <Route
+                path="/admin"
+                element={
+                    <ProtectedRoute>
+                        <AdminPage />
+                    </ProtectedRoute>
+                }
             />
 
             <Route

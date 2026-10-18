@@ -14,6 +14,7 @@ public class BackendApplication {
 
     public static void main(String[] args) {
 //        The entire application starts because of this line
+
         SpringApplication.run(BackendApplication.class, args);
     }
 

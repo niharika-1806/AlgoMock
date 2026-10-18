@@ -1,0 +1,7 @@
+node_modules/
+backend/target/
+frontend/dist/
+frontend/node_modules/
+*.log
+.DS_Store
+*.docx

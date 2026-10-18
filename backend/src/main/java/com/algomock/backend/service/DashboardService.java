@@ -1,71 +1,87 @@
 package com.algomock.backend.service;
 
-import com.algomock.backend.dto.ActivityDto;
 import com.algomock.backend.dto.DashboardResponse;
-import com.algomock.backend.dto.GoalDto;
 import com.algomock.backend.dto.StatDto;
+import com.algomock.backend.model.User;
+import com.algomock.backend.repository.CodeReviewRepository;
+import com.algomock.backend.repository.MockInterviewRepository;
+import com.algomock.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import com.algomock.backend.model.User;
-import com.algomock.backend.repository.UserRepository;
-import com.algomock.backend.repository.ActivityRepository;
-import com.algomock.backend.model.Activity;
-import com.algomock.backend.model.Goal;
-import com.algomock.backend.repository.GoalRepository;
-
 
 @Service
 public class DashboardService {
+
     private final UserRepository userRepository;
-    private final ActivityRepository activityRepository;
-    private final GoalRepository goalRepository;
+    private final CodeReviewRepository codeReviewRepository;
+    private final MockInterviewRepository mockInterviewRepository;
 
     public DashboardService(
             UserRepository userRepository,
-            ActivityRepository activityRepository,
-            GoalRepository goalRepository
+            CodeReviewRepository codeReviewRepository,
+            MockInterviewRepository mockInterviewRepository
     ) {
         this.userRepository = userRepository;
-        this.activityRepository = activityRepository;
-        this.goalRepository = goalRepository;
+        this.codeReviewRepository = codeReviewRepository;
+        this.mockInterviewRepository = mockInterviewRepository;
     }
 
     public DashboardResponse getDashboard(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
 
-        List<StatDto> stats = List.of(
-                new StatDto("Problems Solved", user.getProblemsSolved()),
-                new StatDto("Mock Interviews", user.getMockInterviews()),
-                new StatDto("Code Reviews", user.getCodeReviews()),
-                new StatDto("Daily Streak", user.getDailyStreak())
-        );
-
-        List<Activity> activityEntities =
-                activityRepository.findByUserId(userId);
-        List<ActivityDto> activities = activityEntities.stream()
-                .map(activity ->
-                        new ActivityDto(
-                                activity.getText(),
-                                activity.getTime()
-                        )
-                )
-                .toList();
-
-        Goal goal = goalRepository
-                .findFirstByUserId(userId)
+        User user = userRepository
+                .findById(userId)
                 .orElseThrow();
 
-        GoalDto goalDto = new GoalDto(
-                goal.getTitle(),
-                goal.getProgress(),
-                goal.getDescription()
+        long codeReviewCount =
+                codeReviewRepository.countByUserId(userId);
+
+        long mockInterviewCount =
+                mockInterviewRepository.countByUserId(userId);
+
+        Double averageReviewScore =
+                codeReviewRepository.getAverageScoreByUserId(userId);
+
+        Double averageInterviewScore =
+                mockInterviewRepository.getAverageScoreByUserId(userId);
+
+        int reviewAverage =
+                averageReviewScore == null
+                        ? 0
+                        : (int) Math.round(averageReviewScore);
+
+        int interviewAverage =
+                averageInterviewScore == null
+                        ? 0
+                        : (int) Math.round(averageInterviewScore);
+
+        List<StatDto> stats = List.of(
+
+                new StatDto(
+                        "AI Code Reviews",
+                        String.valueOf(codeReviewCount)
+                ),
+
+                new StatDto(
+                        "Mock Interviews",
+                        String.valueOf(mockInterviewCount)
+                ),
+
+                new StatDto(
+                        "Avg Review Score",
+                        reviewAverage + "/100"
+                ),
+
+                new StatDto(
+                        "Avg Interview Score",
+                        interviewAverage + "/100"
+                )
         );
 
         return new DashboardResponse(
-                stats,
-                activities,
-                goalDto
+                user.getName(),
+                user.getRole() != null ? user.getRole() : "USER",
+                stats
         );
     }
 }
